@@ -184,106 +184,62 @@ function atricon_get_menu_items() {
 
 // Adiciona estilos CSS para o menu lateral
 add_action('wp_enqueue_scripts', function() {
-    $css = \"
-        #atricon-sidebar {
-            position: fixed;
-            top: 0;
-            left: 0; /* Ajustado para 'left' por padrão, pode ser sobrescrito pela opção do usuário */
-            width: 250px; /* Largura padrão, pode ser ajustada */
-            height: 100%;
-            background-color: #f8f9fa; /* Cor de fundo do menu */
-            padding-top: 20px;
-            overflow-y: auto; /* Adiciona scroll se o conteúdo for maior que a altura */
-            z-index: 1000; /* Garante que o menu fique acima de outros elementos */
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Sombra para destacar o menu */
-        }
+    $behavior = get_option('atricon_sidebar_behavior', 'icon_only');
+    $sidebar_pos = get_option('atricon_sidebar_position', 'left');
 
-        #atricon-sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    $sidebar_width_normal = '250px';
+    $sidebar_width_icon_only = '60px';
+    $current_sidebar_width = ($behavior === 'icon_only') ? $sidebar_width_icon_only : $sidebar_width_normal;
 
-        #atricon-sidebar li a {
-            display: flex; /* Alterado para flex para alinhar ícone e texto */
-            align-items: center; /* Alinha verticalmente ícone e texto */
-            padding: 8px 15px; /* Reduzido o padding vertical e ajustado o horizontal */
-            text-decoration: none;
-            color: #333;
-            border-bottom: 1px solid #eee; /* Linha divisória sutil */
+    $css_main = <<<CSS
+        body.admin-bar #wpcontent, 
+        body.admin-bar #wpfooter {
+            margin-left: 0 !important; /* Reseta margem padrão do WordPress se a barra de admin estiver visível */
+            margin-right: 0 !important;
         }
+CSS;
 
-        #atricon-sidebar li a .dashicons {
-            margin-right: 8px; /* Espaçamento entre ícone e texto */
-        }
-
-        #atricon-sidebar li a:hover {
-            background-color: #e9ecef;
-        }
-
-        /* Estilos para o modo 'icon_only' */
-        body.atricon-sidebar-icon-only #atricon-sidebar {
-            width: 60px; /* Largura reduzida para mostrar apenas ícones */
-        }
-
-        body.atricon-sidebar-icon-only #atricon-sidebar .menu-item-title {
-            display: none; /* Esconde o texto do menu */
-        }
-
-        body.atricon-sidebar-icon-only #atricon-sidebar:hover {
-            width: 250px; /* Expande ao passar o mouse */
-        }
-
-        body.atricon-sidebar-icon-only #atricon-sidebar:hover .menu-item-title {
-            display: inline; /* Mostra o texto ao expandir */
-        }
-        
-        /* Ajusta a margem do conteúdo principal para não sobrepor o menu */
-        body.admin-bar #wpcontent, body.admin-bar #wpfooter {
-            margin-left: 0; /* Reseta margem padrão do WordPress se a barra de admin estiver visível */
-        }
+    if ($sidebar_pos === 'left') {
+        $css_main .= <<<CSS
 
         body:not(.atricon-sidebar-icon-only) #page, 
-        body:not(.atricon-sidebar-icon-only) #wpcontent {
-             margin-left: 250px; /* Largura do menu */
-        }
-        
-        /* Ajuste para quando a sidebar está à direita */
-        body.atricon-sidebar-right:not(.atricon-sidebar-icon-only) #page,
-        body.atricon-sidebar-right:not(.atricon-sidebar-icon-only) #wpcontent {
-            margin-left: 0;
-            margin-right: 250px; /* Largura do menu */
+        body:not(.atricon-sidebar-icon-only) #wpcontent,
+        body:not(.atricon-sidebar-icon-only) > *:not(#atricon-sidebar) {
+             margin-left: {$sidebar_width_normal};
+             margin-right: 0;
         }
 
         body.atricon-sidebar-icon-only #page,
-        body.atricon-sidebar-icon-only #wpcontent {
-            margin-left: 60px; /* Largura do menu icon-only */
+        body.atricon-sidebar-icon-only #wpcontent,
+        body.atricon-sidebar-icon-only > *:not(#atricon-sidebar) {
+            margin-left: {$sidebar_width_icon_only};
+            margin-right: 0;
+        }
+CSS;
+    } else { // right
+        $css_main .= <<<CSS
+
+        body:not(.atricon-sidebar-icon-only) #page, 
+        body:not(.atricon-sidebar-icon-only) #wpcontent,
+        body:not(.atricon-sidebar-icon-only) > *:not(#atricon-sidebar) {
+             margin-right: {$sidebar_width_normal};
+             margin-left: 0;
         }
 
-        body.atricon-sidebar-right.atricon-sidebar-icon-only #page,
-        body.atricon-sidebar-right.atricon-sidebar-icon-only #wpcontent {
+        body.atricon-sidebar-icon-only #page,
+        body.atricon-sidebar-icon-only #wpcontent,
+        body.atricon-sidebar-icon-only > *:not(#atricon-sidebar) {
+            margin-right: {$sidebar_width_icon_only};
             margin-left: 0;
-            margin-right: 60px; /* Largura do menu icon-only à direita */
         }
-
-        /* Remove o \\n que aparece no frontend */
-        .atricon-sidebar-menu-container br {
-            display: none;
-        }
-    \";
-
-    $sidebar_pos = get_option('atricon_sidebar_position', 'left');
-    if ($sidebar_pos === 'right') {
-        $css .= \"
-            #atricon-sidebar {
-                left: auto;
-                right: 0;
-                box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-            }
-        \";
+CSS;
     }
 
-    wp_add_inline_style('dashicons', $css); // Adiciona o CSS inline
+    // Os estilos diretos do #atricon-sidebar foram removidos daqui
+    // pois são gerenciados de forma mais completa no hook wp_head.
+    // Este bloco foca principalmente nos ajustes de margem do corpo da página.
+
+    wp_add_inline_style('dashicons', $css_main);
 });
 
 // Adiciona classes ao body para controlar o comportamento e posição do menu
@@ -299,6 +255,7 @@ add_filter('body_class', function($classes) {
     }
     return $classes;
 });
+
 
 
 // 2) Na ativação, cria o menu e popula os itens
@@ -415,7 +372,7 @@ class ATRICON_Walker_Main extends Walker_Nav_Menu {
     function end_el(&$o,$item,$d=0,$a=[]){ 
         // Só adiciona </li> se não for o item de busca
         if ($item->url !== '#busca-servico') {
-            $o.="</li>\\n"; 
+            $o.="</li>\n"; 
         }
     }
 }
@@ -567,7 +524,7 @@ add_action('wp_head', function(){
     .atricon-link{
         display:flex;
         align-items:center;
-        padding:18px 16px;
+        padding:8px 10px;
         color:#374151;
         text-decoration:none;
         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -576,7 +533,7 @@ add_action('wp_head', function(){
         border-bottom:1px solid rgba(0,0,0,0.03);
         transition:all .3s cubic-bezier(0.4, 0, 0.2, 1);
         position:relative;
-        min-height:54px;
+        min-height:32px;
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
     }
@@ -1264,20 +1221,36 @@ add_action('wp_head', function(){
 
 // Garantir que o Menu Icons seja carregado corretamente no frontend
 add_action('wp_enqueue_scripts', function(){
-    wp_enqueue_style('dashicons');
-    
+    // Garante que o jQuery está enfileirado antes de qualquer script do plugin
+    wp_enqueue_script('jquery');
     // Se Menu Icons está ativo, garante que seus estilos sejam carregados
     if (atricon_menu_icons_active() && function_exists('menu_icons')) {
-        // Força o carregamento dos estilos do Menu Icons
         wp_enqueue_style('menu-icons');
     }
+    // Fallback: se jQuery não estiver carregado, carrega do CDN
+    ?>
+    <script type="text/javascript">
+    if (typeof window.jQuery === 'undefined') {
+        var script = document.createElement('script');
+        script.src = 'https://code.jquery.com/jquery-3.6.0.min.js';
+        script.onload = function() {
+            if (window.jQuery) {
+                jQuery(document).ready(function($){
+                    // Re-execute any plugin JS that depends on jQuery here if needed
+                });
+            }
+        };
+        document.head.appendChild(script);
+    }
+    </script>
+    <?php
 });
 
 // Hook para inicializar Menu Icons no nosso menu se necessário
 add_action('wp_footer', function(){
     if (atricon_menu_icons_active() && function_exists('menu_icons')) {
-        // Aplica o processamento do Menu Icons ao nosso menu
-        ?>        <script>
+        ?>
+        <script>
         jQuery(document).ready(function($) {
             // === INICIALIZAÇÃO E COMPATIBILIDADE ===
             // Força a aplicação dos ícones se necessário
@@ -1643,6 +1616,52 @@ add_action('wp_footer', function(){
             }
             
             console.log('ATRICON Sidebar inicializado com sucesso!');
+            
+            // === BUSCA LOCAL DIRETA NO MENU ===
+            $('#atricon-search-input').on('input', function() {
+                var query = $(this).val().trim().toLowerCase();
+                if (!query) {
+                    // Mostra tudo se busca vazia
+                    $('#atricon-sidebar .atricon-item').show();
+                    $('#atricon-sidebar .atricon-submenu').show();
+                    return;
+                }
+                // Esconde todos os itens inicialmente
+                $('#atricon-sidebar .atricon-item').hide();
+                $('#atricon-sidebar .atricon-submenu').hide();
+                // Filtra principais e subitens
+                $('#atricon-sidebar .atricon-item').each(function() {
+                    var $item = $(this);
+                    var $link = $item.children('.atricon-link');
+                    var text = $link.text().toLowerCase();
+                    var found = false;
+                    // Verifica se o item principal corresponde
+                    if (text.indexOf(query) !== -1) {
+                        $item.show();
+                        found = true;
+                    }
+                    // Verifica subitens
+                    var $submenu = $item.children('.atricon-submenu');
+                    if ($submenu.length) {
+                        var subFound = false;
+                        $submenu.children('.atricon-item').each(function() {
+                            var $subitem = $(this);
+                            var $sublink = $subitem.children('.atricon-link');
+                            var subtext = $sublink.text().toLowerCase();
+                            if (subtext.indexOf(query) !== -1) {
+                                $subitem.show();
+                                subFound = true;
+                            } else {
+                                $subitem.hide();
+                            }
+                        });
+                        if (subFound) {
+                            $item.show();
+                            $submenu.show();
+                        }
+                    }
+                });
+            });
         });
         </script>
         <?php
@@ -1664,6 +1683,47 @@ add_action('wp_footer', function(){
             }).on('mouseleave', function() {
                 $(this).removeClass('expanded');
                 $(this).find('.atricon-submenu').hide();
+            });
+            
+            // === BUSCA LOCAL DIRETA NO MENU ===
+            $('#atricon-search-input').on('input', function() {
+                var query = $(this).val().trim().toLowerCase();
+                if (!query) {
+                    $('#atricon-sidebar .atricon-item').show();
+                    $('#atricon-sidebar .atricon-submenu').show();
+                    return;
+                }
+                $('#atricon-sidebar .atricon-item').hide();
+                $('#atricon-sidebar .atricon-submenu').hide();
+                $('#atricon-sidebar .atricon-item').each(function() {
+                    var $item = $(this);
+                    var $link = $item.children('.atricon-link');
+                    var text = $link.text().toLowerCase();
+                    var found = false;
+                    if (text.indexOf(query) !== -1) {
+                        $item.show();
+                        found = true;
+                    }
+                    var $submenu = $item.children('.atricon-submenu');
+                    if ($submenu.length) {
+                        var subFound = false;
+                        $submenu.children('.atricon-item').each(function() {
+                            var $subitem = $(this);
+                            var $sublink = $subitem.children('.atricon-link');
+                            var subtext = $sublink.text().toLowerCase();
+                            if (subtext.indexOf(query) !== -1) {
+                                $subitem.show();
+                                subFound = true;
+                            } else {
+                                $subitem.hide();
+                            }
+                        });
+                        if (subFound) {
+                            $item.show();
+                            $submenu.show();
+                        }
+                    }
+                });
             });
         });
         </script>
