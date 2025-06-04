@@ -1,0 +1,55 @@
+name: Release Plugin ZIP
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Build and Release Plugin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Extract version from plugin file
+        id: get_version
+        run: |
+          VERSION=$(grep -E "^\s*\*\s*Version:\s*" atricon-sidebar-menu.php | awk '{ print $NF }')
+          echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Plugin version: $VERSION"
+
+      - name: Check if tag already exists
+        id: tag_check
+        run: |
+          if git rev-parse "v${{ env.PLUGIN_VERSION }}" >/dev/null 2>&1; then
+            echo "Tag already exists."
+            echo "EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Create zip file
+        run: |
+          zip -r atricon-sidebar-menu.zip . -x '*.git*' '*.github*' '*node_modules*' '*.zip'
+
+      - name: Create Git tag
+        if: env.EXISTS == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${{ env.PLUGIN_VERSION }}" -m "Release v${{ env.PLUGIN_VERSION }}"
+          git push origin "v${{ env.PLUGIN_VERSION }}"
+
+      - name: Create GitHub Release
+        if: env.EXISTS == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.PLUGIN_VERSION }}
+          name: atricon-sidebar-menu v${{ env.PLUGIN_VERSION }}
+          files: atricon-sidebar-menu.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

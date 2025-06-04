@@ -1,7 +1,7 @@
 <?php
 /** * Plugin Name: ATRICON Sidebar Menu
  * Description: Menu lateral fixo para ATRICON com ícones, submenu, busca em tempo real dos itens do WordPress e comportamento configurável (apenas ícones ou sempre visível). Versão melhorada com design responsivo, UX otimizada e prevenção de cortes.
- * Version:     2.3
+ * Version:     1.0
  * Author:      Hermes
  * Text Domain: atricon-sidebar-menu
  */
@@ -519,8 +519,7 @@ add_action('wp_head', function(){
     .atricon-item{
         margin:0;
         position:relative;
-    }
-      /* === LINKS DO MENU - DESIGN MODERNO === */
+    }    /* === LINKS DO MENU - DESIGN MODERNO === */
     .atricon-link{
         display:flex;
         align-items:center;
@@ -536,6 +535,12 @@ add_action('wp_head', function(){
         min-height:32px;
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
+        line-height: 1.4;
+    }
+    
+    /* Melhora o alinhamento vertical do conteúdo do link */
+    .atricon-link > * {
+        align-self: center;
     }
     
     .atricon-link:hover{
@@ -582,8 +587,7 @@ add_action('wp_head', function(){
     .atricon-item:hover > .atricon-link::after {
         border-left-color: #2271b1;
         transform: translateY(-50%) rotate(90deg);
-    }      /* === ÍCONES MELHORADOS - COMPATIBILIDADE COM MENU ICONS === */
-    ._mi._before {
+    }    /* === ÍCONES MELHORADOS - COMPATIBILIDADE COM MENU ICONS === */    ._mi._before {
         width:28px;
         height:28px;
         text-align:center;
@@ -602,17 +606,80 @@ add_action('wp_head', function(){
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         position: relative;
         overflow: hidden;
+        vertical-align: middle;
+        line-height: 1;
     }
     
     ._mi._before::before {
         transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        line-height: 1;
+        vertical-align: middle;
+    }    /* Melhoria específica para o ícone de visibility */
+    ._mi._before[class*="dashicons-visibility"]::before {
+        font-size: 16px !important;
+        transform: translateY(1px); /* Ajuste fino para baixo */
+        line-height: 1;
     }
     
+    /* Melhoria geral para todos os dashicons */
+    ._mi._before[class*="dashicons-"]::before {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        line-height: 1 !important;
+        vertical-align: baseline !important;
+        font-family: dashicons !important;
+        text-align: center;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+      /* Ajuste específico para corrigir o alinhamento do ícone visibility */
+    ._mi._before[class*="dashicons-visibility"]::before {
+        top: 50%;
+        transform: translateY(-48%); /* Ligeiramente para baixo para alinhar melhor */
+        font-size: 16px !important;
+    }
+    
+    /* Ajuste ainda mais específico para dashicons-visibility */
+    a[href="#transparencia"] ._mi._before[class*="dashicons-visibility"]::before,
+    .menu-item ._mi._before[class*="dashicons-visibility"]::before {
+        position: relative;
+        top: 1px; /* Move 1px para baixo */
+        transform: none;
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 1;
+    }
     .atricon-link:hover ._mi._before {
         color:#ffffff;
         background: linear-gradient(135deg, #2271b1 0%, #1e5a8a 100%);
         transform: scale(1.05) rotate(2deg);
         box-shadow: 0 4px 12px rgba(34, 113, 177, 0.3);
+    }    /* Melhoria específica para dashicons em hover */
+    .atricon-link:hover ._mi._before[class*="dashicons-visibility"]::before {
+        top: 1px !important; /* Mantém a mesma posição no hover */
+        transform: none !important;
+    }
+    
+    /* Garante que outros dashicons mantenham o alinhamento no hover */
+    .atricon-link:hover ._mi._before[class*="dashicons-"]::before {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    
+    /* Exceção específica para visibility no hover */
+    .atricon-link:hover a[href="#transparencia"] ._mi._before[class*="dashicons-visibility"]::before,
+    .atricon-link:hover .menu-item ._mi._before[class*="dashicons-visibility"]::before {
+        top: 1px !important;
+        transform: none !important;
     }
     
     /* No hover do sidebar, adiciona margem direita aos ícones */
@@ -625,8 +692,7 @@ add_action('wp_head', function(){
         margin-right:12px;
     }
     <?php endif; ?>
-    
-    /* Fallback para quando Menu Icons não está ativo */
+      /* Fallback para quando Menu Icons não está ativo */
     .atricon-icon{
         width:24px;
         height:24px;
@@ -643,6 +709,17 @@ add_action('wp_head', function(){
         border-radius: 8px;
         min-width: 24px;
         min-height: 24px;
+        vertical-align: middle;
+        line-height: 1;
+    }
+    
+    .atricon-icon::before {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        line-height: 1;
     }
     
     .atricon-link:hover .atricon-icon {
@@ -770,14 +847,26 @@ add_action('wp_head', function(){
         color:#1d4ed8;
         transform: translateX(<?php echo $side === 'right' ? '-4px' : '4px'; ?>);
     }
-    
-    .atricon-submenu .atricon-link ._mi._before,
+      .atricon-submenu .atricon-link ._mi._before,
     .atricon-submenu .atricon-link .atricon-icon {
         font-size: 14px !important;
         width: 20px;
         height: 20px;
         margin-right: 8px;
-    }      /* === FOOTER/LOGO ATRICON MELHORADO === */
+        min-width: 20px;
+        min-height: 20px;
+    }
+    
+    /* Alinhamento específico para dashicons em submenus */
+    .atricon-submenu .atricon-link ._mi._before[class*="dashicons-"]::before {
+        font-size: 14px !important;
+        line-height: 1 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }/* === FOOTER/LOGO ATRICON MELHORADO === */
     .atricon-footer{
         position:fixed;
         bottom:0;
