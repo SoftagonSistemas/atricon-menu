@@ -1351,46 +1351,46 @@
         }
     });
 
-    // Garantir que os dashicons sejam carregados no frontend
-    add_action('wp_enqueue_scripts', function(){
-        wp_enqueue_style('dashicons');
-    });
-
-    // 5) Renderiza o menu no início do <body>
-    add_action('wp_body_open', function(){
-        if(!has_nav_menu('atrcn-sidebar')) return;
-        echo '<nav id="atricon-sidebar">';
-        
-        // Caixa de busca no topo
-        $behavior = get_option('atricon_sidebar_behavior', 'icon_only');
-        $search_placeholder = $behavior === 'always_show' ? 'Buscar serviços...' : '';
-        echo '<div class="atricon-search-container">';
-        echo '<div class="atricon-search-wrapper">';
-        echo '<span class="dashicons dashicons-search atricon-search-icon" aria-hidden="true"></span>';
-        echo '<input type="text" id="atricon-search-input" class="atricon-search-input" placeholder="' . esc_attr($search_placeholder) . '" autocomplete="off" aria-label="Buscar serviços">';
-        echo '</div>';
-        echo '<div id="atricon-search-results" class="atricon-search-results" style="display:none;" role="listbox" aria-label="Resultados da busca"></div>';
-        echo '</div>';
-        // Menu principal
-        wp_nav_menu([
-            'theme_location'=>'atrcn-sidebar',
-            'menu_class'=>'atricon-menu',
-            'container'=>false,
-            'walker'=>new ATRICON_Walker_Main()
-        ]);
-        
-        // Logo e texto ATRICON
-        $url = plugin_dir_url(__FILE__).'logo.png';
-        echo '<div class="atricon-footer">';
-        echo '<img src="' . esc_url($url) . '" alt="ATRICON Logo" class="atricon-logo-img">';
-        echo '<span class="atricon-brand-text">ATRICON</span>';
-        echo '</div>';
-        echo '</nav>';
-        // Remove style inline dos submenus para garantir hover via CSS
-        echo '<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".atricon-submenu").forEach(function(el){el.removeAttribute("style");});});</script>';
-        // Botão mobile (será mostrado apenas em dispositivos móveis via CSS)
-        echo '<button class="atricon-mobile-toggle" aria-label="Abrir/Fechar Menu de Transparência" style="display:none;"><i class="dashicons dashicons-menu" aria-hidden="true"></i></button>';
-    });
+    // Garantir que os dashicons, CSS e JS do menu sejam carregados apenas no frontend
+    if (!is_admin()) {
+        add_action('wp_enqueue_scripts', function() {
+            wp_enqueue_style('dashicons');
+            wp_enqueue_style('atricon-material-icons', 'https://fonts.googleapis.com/icon?family=Material+Icons', [], null);
+            wp_enqueue_style('atricon-roboto', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap', [], null);
+            wp_enqueue_style('atricon-sidebar', plugin_dir_url(__FILE__) . 'includes/sidebar.css', [], null);
+            wp_enqueue_style('atricon-sidebar-responsive', plugin_dir_url(__FILE__) . 'includes/sidebar-responsive.css', ['atricon-sidebar'], null);
+            wp_enqueue_script('atricon-sidebar', plugin_dir_url(__FILE__) . 'includes/sidebar.js', ['jquery'], null, true);
+        });
+        add_action('wp_body_open', function() {
+            $logo_url = plugin_dir_url(__FILE__) . 'logo.png';
+            ?>
+            <div class="container" id="menu-container">
+                <aside class="sidebar" id="main-sidebar">
+                    <div class="search-box">
+                        <div style="position: relative;">
+                            <input type="text" placeholder="Buscar no menu..." id="menu-search">
+                            <i class="material-icons" id="clear-search" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none; color: #666;">close</i>
+                        </div>
+                    </div>
+                    <ul class="menu" id="menu-list"></ul>
+                    <div class="sidebar-footer">
+                        <img src="<?php echo esc_url($logo_url); ?>" alt="ATRICON Logo" class="sidebar-logo" />
+                        <span class="sidebar-brand-text">ATRICON</span>
+                    </div>
+                </aside>
+                <aside class="submenu-sidebar" id="submenu">
+                    <h2 id="submenu-title">Título</h2>
+                    <div class="submenu" id="submenu-content"></div>
+                </aside>
+            </div>
+            <main>
+                <h1>Bem-vindo</h1>
+                <p>Selecione um item no menu lateral.</p>
+            </main>
+            <!-- CSS do rodapé/brand movido para sidebar.css para clean architecture -->
+            <?php
+        });
+    }
 
     // Função para reconfigurar ícones quando Menu Icons for ativado
     function atricon_update_menu_icons() {
