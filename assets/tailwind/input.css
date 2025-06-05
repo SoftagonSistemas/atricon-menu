@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .atricon-sidebar {
+    @apply fixed top-0 h-screen overflow-y-auto overflow-x-hidden z-50 transition-all duration-300 ease-sidebar;
+  }
+
+  .atricon-sidebar-left {
+    @apply left-0 border-r border-gray-200 shadow-sidebar;
+  }
+
+  .atricon-sidebar-right {
+    @apply right-0 border-l border-gray-200 shadow-sidebar;
+  }
+
+  .atricon-menu {
+    @apply list-none p-0 m-0 pb-20 flex-1 overflow-y-auto overflow-x-hidden;
+  }
+
+  .atricon-item {
+    @apply m-0 relative;
+  }
+
+  .atricon-link {
+    @apply flex items-center gap-3 px-4 py-2 text-gray-800 no-underline font-medium text-base border-b border-gray-100 transition-all duration-200 ease-sidebar min-h-12 hover:bg-atricon-light hover:text-atricon-primary rounded-lg;
+  }
+
+  .atricon-link:focus {
+    @apply outline-none ring-2 ring-atricon-primary;
+  }
+
+  .atricon-link span, .atricon-link strong {
+    @apply whitespace-nowrap overflow-hidden text-ellipsis;
+  }
+
+  .atricon-submenu {
+    @apply bg-atricon-lighter border-t border-b border-gray-200 rounded-lg shadow-sm mt-1;
+  }
+
+  .atricon-submenu .atricon-link {
+    @apply pl-8 text-sm font-normal;
+  }
+
+  .atricon-link ._mi._before, .atricon-link .atricon-icon {
+    @apply w-7 h-7 flex items-center justify-center text-lg bg-gray-100 rounded-xl mr-2;
+  }
+
+  .atricon-link ._mi._before::before {
+    @apply text-lg flex items-center justify-center;
+  }
+
+  .atricon-link, .atricon-link:visited, .atricon-link:active {
+    @apply no-underline;
+  }
+
+  .atricon-search-container {
+    @apply p-4 border-b border-gray-200 bg-gradient-to-r from-atricon-light to-atricon-lighter m-0 relative z-10 box-border w-full flex-shrink-0 block;
+  }
+
+  .atricon-search-wrapper {
+    @apply relative flex items-center bg-white border border-gray-300 rounded-lg transition-all duration-300 ease-sidebar shadow-sm w-full box-border min-h-10 h-10;
+  }
+
+  .atricon-search-input {
+    @apply border-none bg-transparent p-2 text-sm w-full h-10 leading-5 outline-none font-sans text-gray-700 font-normal box-border flex-1 min-w-0 m-0 rounded-none block;
+  }
+
+  .atricon-footer {
+    @apply fixed bottom-0 w-full h-[70px] flex items-center justify-center gap-3 bg-gradient-to-r from-white to-atricon-light border-t border-atricon-primary/10 backdrop-blur-sm opacity-95 transition-all duration-300 ease-sidebar px-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] z-10 cursor-pointer;
+  }
+
+  .atricon-search-results {
+    @apply absolute bg-white border border-gray-300 border-t-0 rounded-b-lg max-h-[250px] overflow-y-auto z-[1001] shadow-md m-0 w-full box-border;
+  }
+
+  .atricon-search-result-item {
+    @apply p-2.5 border-b border-gray-100 cursor-pointer text-xs text-gray-700 transition-all duration-200 ease-sidebar font-normal relative leading-tight break-words;
+  }
+
+  .atricon-search-result-item:hover,
+  .atricon-search-result-item.atricon-active {
+    @apply bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 pl-4;
+  }
+
+  .atricon-search-highlight {
+    @apply bg-gradient-to-r from-yellow-100 to-yellow-200 font-semibold px-1.5 py-0.5 rounded text-yellow-800;
+  }
+
+  .atricon-menu > li, .atricon-submenu > li {
+    @apply m-0 p-0;
+  }
+
+  .atricon-link, .atricon-link span, .atricon-link strong {
+    @apply break-words;
+  }
+
+  /* Sidebar menu: remove bullets, padding, margin, and enforce clean look */
+  #atricon-sidebar ul,
+  #atricon-sidebar ul li,
+  #atricon-sidebar li {
+    list-style: none !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    background: none !important;
+    border: none !important;
+  }
+  #atricon-sidebar .menu-item:before,
+  #atricon-sidebar .menu-item:after {
+    display: none !important;
+    content: none !important;
+  }
+  #atricon-sidebar .menu-item {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+  }
+  #atricon-sidebar .atricon-link {
+    @apply flex items-center gap-3 px-4 py-2 text-gray-800 no-underline font-medium text-base border-b border-gray-100 transition-all duration-200 ease-sidebar min-h-12 hover:bg-atricon-light hover:text-atricon-primary rounded-lg;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+  }
+  #atricon-sidebar .atricon-link:focus {
+    @apply outline-none ring-2 ring-atricon-primary;
+  }
+  #atricon-sidebar .atricon-link span, #atricon-sidebar .atricon-link strong {
+    @apply whitespace-nowrap overflow-hidden text-ellipsis;
+  }
+  #atricon-sidebar .atricon-submenu .atricon-link {
+    @apply pl-8 text-sm font-normal;
+  }
+  #atricon-sidebar .atricon-link ._mi._before, #atricon-sidebar .atricon-link .atricon-icon {
+    @apply w-7 h-7 flex items-center justify-center text-lg bg-gray-100 rounded-xl mr-2;
+  }
+  #atricon-sidebar .atricon-link ._mi._before::before {
+    @apply text-lg flex items-center justify-center;
+  }
+  #atricon-sidebar .atricon-link, #atricon-sidebar .atricon-link:visited, #atricon-sidebar .atricon-link:active {
+    @apply no-underline;
+    text-decoration: none !important;
+  }
+  #atricon-sidebar .atricon-submenu {
+    @apply bg-atricon-lighter border-t border-b border-gray-200 rounded-lg shadow-sm mt-1;
+  }
+  #atricon-sidebar .atricon-link, #atricon-sidebar .atricon-link span, #atricon-sidebar .atricon-link strong {
+    @apply break-words;
+  }
+}
+
+@layer utilities {
+  #atricon-sidebar ul,
+  #atricon-sidebar ul li,
+  #atricon-sidebar li {
+    list-style: none !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    background: none !important;
+    border: none !important;
+  }
+  #atricon-sidebar .menu-item:before,
+  #atricon-sidebar .menu-item:after {
+    display: none !important;
+    content: none !important;
+  }
+} 
