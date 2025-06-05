@@ -1,4 +1,4 @@
-    <?php
+<?php
     /** * Plugin Name: ATRICON Sidebar Menu
      * Description: Menu lateral fixo para ATRICON com ícones, submenu, busca em tempo real dos itens do WordPress e comportamento configurável (apenas ícones ou sempre visível). Versão melhorada com design responsivo, UX otimizada e prevenção de cortes.
      * Version:     2.3
@@ -121,10 +121,41 @@
         );
     });
 
-    // 1) Registra localização
-    add_action('init', function(){
-        register_nav_menu('atrcn-sidebar','ATRICON Sidebar Menu');
-    });
+
+// 1) Registra localização e cria menu ATRICON se não existir
+add_action('init', function(){
+    register_nav_menu('atrcn-sidebar','ATRICON Sidebar Menu');
+    // Cria o menu ATRICON se não existir
+    if (!wp_get_nav_menu_object('ATRICON')) {
+        $menu_id = wp_create_nav_menu('ATRICON');
+        // Adiciona itens iniciais
+        $items = atricon_get_menu_items();
+        $parent_ids = [];
+        foreach ($items as $item) {
+            $args = [
+                'menu-item-title' => $item['t'],
+                'menu-item-url' => home_url('/'.$item['v']),
+                'menu-item-status' => 'publish',
+                'menu-item-description' => isset($item['code']) ? $item['code'] : '',
+            ];
+            $parent_id = wp_update_nav_menu_item($menu_id, 0, $args);
+            $parent_ids[$item['v']] = $parent_id;
+            // Subitens
+            if (isset($item['c']) && is_array($item['c'])) {
+                foreach ($item['c'] as $subitem) {
+                    $sub_args = [
+                        'menu-item-title' => $subitem['t'],
+                        'menu-item-url' => home_url('/'.$subitem['v']),
+                        'menu-item-status' => 'publish',
+                        'menu-item-description' => isset($subitem['code']) ? $subitem['code'] : '',
+                        'menu-item-parent-id' => $parent_id,
+                    ];
+                    wp_update_nav_menu_item($menu_id, 0, $sub_args);
+                }
+            }
+        }
+    }
+});
 
     // Função centralizada para definir os itens do menu
     function atricon_get_menu_items() {
@@ -1383,10 +1414,6 @@
                     <div class="submenu" id="submenu-content"></div>
                 </aside>
             </div>
-            <main>
-                <h1>Bem-vindo</h1>
-                <p>Selecione um item no menu lateral.</p>
-            </main>
             <!-- CSS do rodapé/brand movido para sidebar.css para clean architecture -->
             <?php
         });
