@@ -324,7 +324,6 @@ add_action('init', function(){
             $item_output = isset($a->before) ? $a->before : '';
             $item_output .= '<a' . $attributes . '>';
             
-            // Deixa que o Menu Icons adicione o ícone se estiver ativo
             $title = apply_filters('the_title', $item->title, $item->ID);
             $item_output .= (isset($a->link_before) ? $a->link_before : '') . $title . (isset($a->link_after) ? $a->link_after : '');
             
@@ -1320,15 +1319,7 @@ add_action('init', function(){
                             <i class="material-icons" id="clear-search" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none; color: #666;">close</i>
                         </div>
                     </div>
-                    <?php
-                    wp_nav_menu([
-                        'theme_location' => 'atrcn-sidebar',
-                        'container' => false,
-                        'menu_class' => 'menu',
-                        'walker' => class_exists('ATRICON_Walker_Main') ? new ATRICON_Walker_Main() : '',
-                        'fallback_cb' => false
-                    ]);
-                    ?>
+                    <ul class="menu" id="menu-list"></ul>
                     <div class="sidebar-footer">
                         <img src="<?php echo esc_url($logo_url); ?>" alt="ATRICON Logo" class="sidebar-logo" />
                         <span class="sidebar-brand-text">ATRICON</span>
