@@ -1,0 +1,749 @@
+/* Força a fonte dos ícones Material Icons clássicos */
+/* .material-icons {
+  font-family: 'Material Icons' !important;
+  font-size: 28px !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  line-height: 1 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  direction: ltr !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} */
+
+/* Estilização para ícones SVG */
+.atricon-menu-icon svg,
+.atricon-submenu-indicator svg {
+    width: 24px; /* Ou o tamanho desejado */
+    height: 24px; /* Ou o tamanho desejado */
+    fill: currentColor; /* Para herdar a cor do texto ou definir uma específica */
+    vertical-align: middle;
+    display: inline-block;
+}
+
+/* ATRICON Sidebar Menu - Material Design 3 Expressive */
+
+/* Material Design 3 Color Tokens */
+:root {
+    /* Primary Colors - Dynamic Material 3 Palette */
+    --md-sys-color-primary: #006A6B;
+    --md-sys-color-on-primary: #FFFFFF;
+    --md-sys-color-primary-container: #6FF7FF;
+    --md-sys-color-on-primary-container: #002020;
+    
+    /* Surface Colors */
+    --md-sys-color-surface: #0F1419;
+    --md-sys-color-surface-dim: #0F1419;
+    --md-sys-color-surface-bright: #35393F;
+    --md-sys-color-surface-container-lowest: #0A0E13;
+    --md-sys-color-surface-container-low: #171C20;
+    --md-sys-color-surface-container: #1B2024;
+    --md-sys-color-surface-container-high: #252A2E;
+    --md-sys-color-surface-container-highest: #303539;
+    
+    /* On Surface Colors */
+    --md-sys-color-on-surface: #E1E2E8;
+    --md-sys-color-on-surface-variant: #3F484A;
+    --md-sys-color-outline: #899294;
+    --md-sys-color-outline-variant: #3F484A;
+    
+    /* Secondary Colors */
+    --md-sys-color-secondary: #4A6363;
+    --md-sys-color-on-secondary: #FFFFFF;
+    --md-sys-color-secondary-container: #CCE8E7;
+    --md-sys-color-on-secondary-container: #051F1F;
+    
+    /* Tertiary Colors */
+    --md-sys-color-tertiary: #4B607C;
+    --md-sys-color-on-tertiary: #FFFFFF;
+    --md-sys-color-tertiary-container: #D3E4FF;
+    --md-sys-color-on-tertiary-container: #041C35;
+    
+    /* Error Colors */
+    --md-sys-color-error: #FFB4AB;
+    --md-sys-color-on-error: #690005;
+    --md-sys-color-error-container: #93000A;
+    --md-sys-color-on-error-container: #FFDAD6;
+    
+    /* Material Design 3 Typography Scale */
+    --md-sys-typescale-display-large: 600 57px/64px 'Google Sans', system-ui, -apple-system, sans-serif;
+    --md-sys-typescale-display-medium: 400 45px/52px 'Google Sans', system-ui, -apple-system, sans-serif;
+    --md-sys-typescale-headline-large: 400 32px/40px 'Google Sans', system-ui, -apple-system, sans-serif;
+    --md-sys-typescale-headline-medium: 400 28px/36px 'Google Sans', system-ui, -apple-system, sans-serif;
+    --md-sys-typescale-title-large: 400 22px/28px 'Google Sans', system-ui, -apple-system, sans-serif;
+    --md-sys-typescale-title-medium: 500 16px/24px 'Google Sans', system-ui, -apple-system, sans-serif;
+    --md-sys-typescale-body-large: 400 16px/24px 'Google Sans', system-ui, -apple-system, sans-serif;
+    --md-sys-typescale-body-medium: 400 14px/20px 'Google Sans', system-ui, -apple-system, sans-serif;
+    --md-sys-typescale-label-large: 500 14px/20px 'Google Sans', system-ui, -apple-system, sans-serif;
+    --md-sys-typescale-label-medium: 500 12px/16px 'Google Sans', system-ui, -apple-system, sans-serif;
+    
+    /* Material Design 3 Elevation */
+    --md-sys-elevation-level0: none;
+    --md-sys-elevation-level1: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+    --md-sys-elevation-level2: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+    --md-sys-elevation-level3: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+    --md-sys-elevation-level4: 0px 6px 10px 4px rgba(0, 0, 0, 0.15), 0px 2px 3px 0px rgba(0, 0, 0, 0.3);
+    --md-sys-elevation-level5: 0px 8px 12px 6px rgba(0, 0, 0, 0.15), 0px 4px 4px 0px rgba(0, 0, 0, 0.3);
+    
+    /* Material Design 3 Motion */
+    --md-sys-motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+    --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+    --md-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+    --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+    --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+    --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+    --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+    
+    /* Material Design 3 Shape */
+    --md-sys-shape-corner-none: 0px;
+    --md-sys-shape-corner-extra-small: 4px;
+    --md-sys-shape-corner-small: 8px;
+    --md-sys-shape-corner-medium: 12px;
+    --md-sys-shape-corner-large: 16px;
+    --md-sys-shape-corner-extra-large: 28px;
+    --md-sys-shape-corner-full: 50%;
+}
+
+/* Base reset with Material Design 3 principles */
+#atricon-sidebar,
+#atricon-sidebar *,
+#atricon-sidebar ul,
+#atricon-sidebar ol,
+#atricon-sidebar li {
+    list-style: none !important;
+    list-style-type: none !important;
+    list-style-image: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    border: 0 !important;
+    font: inherit !important;
+    vertical-align: baseline !important;
+}
+
+/* Remove unwanted pseudo-elements */
+#atricon-sidebar *::before,
+#atricon-sidebar *::after {
+    content: "" !important;
+    display: none !important;
+}
+
+/* Main container - Material Design 3 Expressive */
+#atricon-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 80px !important;
+    height: 100vh !important;
+    background: var(--md-sys-color-surface-container) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    border-right: 1px solid var(--md-sys-color-outline-variant) !important;
+    box-shadow: var(--md-sys-elevation-level3) !important;
+    z-index: 999999 !important;
+    transition: width 400ms var(--md-sys-motion-easing-emphasized), 
+                box-shadow 300ms var(--md-sys-motion-easing-standard) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+    contain: layout style paint !important;
+    border-radius: 0 var(--md-sys-shape-corner-large) var(--md-sys-shape-corner-large) 0 !important;
+}
+
+/* Right position */
+#atricon-sidebar.position-right {
+    left: auto !important;
+    right: 0 !important;
+    border-right: none !important;
+    border-left: 1px solid var(--md-sys-color-outline-variant) !important;
+    box-shadow: var(--md-sys-elevation-level3) !important;
+    border-radius: var(--md-sys-shape-corner-large) 0 0 var(--md-sys-shape-corner-large) !important;
+}
+
+/* Hover expansion with Material Motion */
+#atricon-sidebar:hover {
+    width: 320px !important;
+    box-shadow: var(--md-sys-elevation-level5) !important;
+    transform: translateZ(0) !important;
+}
+
+#atricon-sidebar.position-right:hover {
+    box-shadow: var(--md-sys-elevation-level5) !important;
+}
+
+/* Always expanded mode */
+#atricon-sidebar.always-show {
+    width: 320px !important;
+}
+
+/* Search field - Material Design 3 Text Field */
+.atricon-search {
+    padding: 24px 16px !important;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant) !important;
+    background: var(--md-sys-color-surface-container-low) !important;
+    flex-shrink: 0 !important;
+}
+
+.atricon-search input {
+    width: 100% !important;
+    padding: 16px 20px !important;
+    background: var(--md-sys-color-surface-container-highest) !important;
+    border: 2px solid var(--md-sys-color-outline-variant) !important;
+    border-radius: var(--md-sys-shape-corner-extra-large) !important;
+    color: var(--md-sys-color-on-surface) !important;
+    font: var(--md-sys-typescale-body-large) !important;
+    transition: all 300ms var(--md-sys-motion-easing-standard) !important;
+    backdrop-filter: blur(12px) !important;
+    outline: none !important;
+}
+
+.atricon-search input:focus {
+    border-color: var(--md-sys-color-primary) !important;
+    background: var(--md-sys-color-surface-container-highest) !important;
+    box-shadow: 0 0 0 4px rgba(0, 106, 107, 0.12) !important;
+    transform: scale(1.02) !important;
+}
+
+.atricon-search input::placeholder {
+    color: var(--md-sys-color-on-surface-variant) !important;
+    font: var(--md-sys-typescale-body-large) !important;
+}
+
+/* Menu container with enhanced scrolling */
+.atricon-menu-container {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 16px 12px 120px 12px !important;
+    scroll-behavior: smooth !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--md-sys-color-outline-variant) transparent !important;
+}
+
+/* Material Design 3 Scrollbar */
+.atricon-menu-container::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+.atricon-menu-container::-webkit-scrollbar-track {
+    background: transparent !important;
+    border-radius: var(--md-sys-shape-corner-small) !important;
+}
+
+.atricon-menu-container::-webkit-scrollbar-thumb {
+    background: var(--md-sys-color-outline-variant) !important;
+    border-radius: var(--md-sys-shape-corner-small) !important;
+    transition: background 200ms var(--md-sys-motion-easing-standard) !important;
+}
+
+.atricon-menu-container::-webkit-scrollbar-thumb:hover {
+    background: var(--md-sys-color-outline) !important;
+}
+
+/* Menu items - Material Design 3 Cards */
+.atricon-menu-item {
+    position: relative !important;
+    margin: 8px 0 !important;
+}
+
+.atricon-menu-link {
+    display: flex !important;
+    align-items: center !important;
+    padding: 12px 16px !important;
+    color: var(--md-sys-color-on-surface) !important;
+    text-decoration: none !important;
+    border-radius: var(--md-sys-shape-corner-large) !important;
+    transition: all 300ms var(--md-sys-motion-easing-emphasized) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    background: var(--md-sys-color-surface-container-low) !important;
+    border: 1px solid var(--md-sys-color-outline-variant) !important;
+    backdrop-filter: blur(16px) !important;
+    min-height: 48px !important;
+}
+
+.atricon-menu-text {
+    flex: 1 !important;
+    font: var(--md-sys-typescale-title-medium) !important;
+    white-space: nowrap !important;
+    opacity: 0 !important;
+    transform: translateX(-16px) !important;
+    transition: all 400ms var(--md-sys-motion-easing-emphasized-decelerate) !important;
+    letter-spacing: 0.1px !important;
+    line-height: 1.2 !important;
+    font-size: 1.1rem !important;
+}
+
+/* Material Design 3 State Layers */
+.atricon-menu-link::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: var(--md-sys-color-primary) !important;
+    opacity: 0 !important;
+    transition: opacity 200ms var(--md-sys-motion-easing-standard) !important;
+    z-index: -1 !important;
+}
+
+/* Hover states with Material Motion */
+.atricon-menu-link:hover {
+    background: var(--md-sys-color-surface-container-high) !important;
+    color: var(--md-sys-color-primary) !important;
+    border-color: var(--md-sys-color-primary) !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: var(--md-sys-elevation-level2) !important;
+}
+
+.atricon-menu-link:hover::before {
+    opacity: 0.08 !important;
+}
+
+.atricon-menu-link:active {
+    transform: translateY(-1px) scale(1.01) !important;
+}
+
+/* Focus states for accessibility */
+.atricon-menu-link:focus-visible {
+    outline: 3px solid var(--md-sys-color-primary) !important;
+    outline-offset: 2px !important;
+}
+
+/* Active states */
+.atricon-menu-link.current-menu-item,
+.atricon-menu-link.current-menu-parent {
+    background: var(--md-sys-color-primary-container) !important;
+    color: var(--md-sys-color-on-primary-container) !important;
+    border-color: var(--md-sys-color-primary) !important;
+    box-shadow: var(--md-sys-elevation-level3) !important;
+}
+
+/* Icons - Enhanced Material Design 3 */
+
+.atricon-menu-icon.material-symbols-rounded {
+    font-family: 'Material Symbols Rounded' !important;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
+    font-size: 28px !important;
+    width: 40px !important;
+    height: 40px !important;
+    margin-right: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    color: var(--md-sys-color-on-surface-variant) !important;
+    transition: all 300ms var(--md-sys-motion-easing-emphasized) !important;
+    position: relative !important;
+    border-radius: var(--md-sys-shape-corner-small) !important;
+    background: rgba(0, 106, 107, 0.08) !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+.atricon-menu-link:hover .atricon-menu-icon.material-symbols-rounded {
+    color: var(--md-sys-color-primary) !important;
+    transform: scale(1.2) rotate(5deg) !important;
+    background: rgba(0, 106, 107, 0.16) !important;
+}
+
+.atricon-submenu-indicator.material-symbols-rounded {
+    font-family: 'Material Symbols Rounded', sans-serif !important;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
+    font-size: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: var(--md-sys-shape-corner-full) !important;
+    background: var(--md-sys-color-surface-container-highest) !important;
+    color: var(--md-sys-color-on-surface-variant) !important;
+    opacity: 0 !important;
+    transition: all 300ms var(--md-sys-motion-easing-emphasized) !important;
+}
+
+#atricon-sidebar:hover .atricon-submenu-indicator.material-symbols-rounded,
+#atricon-sidebar.always-show .atricon-submenu-indicator.material-symbols-rounded {
+    opacity: 1 !important;
+}
+
+.atricon-menu-item:hover .atricon-submenu-indicator.material-symbols-rounded,
+.atricon-menu-item.open .atricon-submenu-indicator.material-symbols-rounded {
+    transform: rotate(90deg) !important;
+    background: var(--md-sys-color-primary-container) !important;
+    color: var(--md-sys-color-on-primary-container) !important;
+}
+
+.atricon-menu-link:hover .atricon-menu-icon {
+    color: var(--md-sys-color-primary) !important;
+    transform: scale(1.2) rotate(5deg) !important;
+    background: rgba(0, 106, 107, 0.16) !important;
+}
+
+/* Força a fonte dos ícones Material Symbols em todo o site */
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded' !important;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  direction: ltr !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dashicons configuration */
+.atricon-menu-icon .dashicons,
+.dashicons {
+    font-family: dashicons !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: inline-block !important;
+    text-decoration: inherit !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    vertical-align: top !important;
+    text-align: center !important;
+    transition: color 300ms var(--md-sys-motion-easing-standard) !important;
+    speak: none !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Menu text with Material Typography */
+.atricon-menu-text {
+    flex: 1 !important;
+    font: var(--md-sys-typescale-title-medium) !important;
+    white-space: nowrap !important;
+    opacity: 0 !important;
+    transform: translateX(-16px) !important;
+    transition: all 400ms var(--md-sys-motion-easing-emphasized-decelerate) !important;
+    letter-spacing: 0.1px !important;
+    line-height: 1.2 !important;
+    font-size: 1.1rem !important;
+}
+
+/* Submenu indicator - Material Design 3 */
+.atricon-submenu-indicator {
+    margin-left: auto !important;
+    transition: all 300ms var(--md-sys-motion-easing-emphasized) !important;
+    font-size: 12px !important;
+    color: var(--md-sys-color-on-surface-variant) !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: var(--md-sys-shape-corner-full) !important;
+    background: var(--md-sys-color-surface-container-highest) !important;
+    opacity: 0 !important;
+}
+
+#atricon-sidebar:hover .atricon-submenu-indicator,
+#atricon-sidebar.always-show .atricon-submenu-indicator {
+    opacity: 1 !important;
+}
+
+.atricon-menu-item:hover .atricon-submenu-indicator,
+.atricon-menu-item.open .atricon-submenu-indicator {
+    transform: rotate(90deg) !important;
+    background: var(--md-sys-color-primary-container) !important;
+    color: var(--md-sys-color-on-primary-container) !important;
+}
+
+/* Submenu - Material Design 3 Navigation Drawer */
+.atricon-submenu {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--md-sys-color-surface-container) !important;
+    border-radius: var(--md-sys-shape-corner-medium) !important;
+    margin: 8px 0 0 0 !important;
+    overflow: hidden !important;
+    max-height: 0 !important;
+    transition: all 400ms var(--md-sys-motion-easing-emphasized) !important;
+    border: 1px solid var(--md-sys-color-outline-variant) !important;
+    backdrop-filter: blur(20px) !important;
+}
+
+.atricon-menu-item:hover .atricon-submenu,
+.atricon-menu-item.open .atricon-submenu {
+    max-height: 800px !important;
+    padding: 8px !important;
+    border-color: var(--md-sys-color-primary) !important;
+    box-shadow: var(--md-sys-elevation-level2) !important;
+}
+
+.atricon-submenu .atricon-menu-link {
+    padding: 12px 16px 12px 48px !important;
+    font: var(--md-sys-typescale-body-medium) !important;
+    margin: 4px 0 !important;
+    border-radius: var(--md-sys-shape-corner-medium) !important;
+    background: var(--md-sys-color-surface-container-low) !important;
+    min-height: 48px !important;
+}
+
+.atricon-submenu .atricon-menu-link:hover {
+    background: var(--md-sys-color-surface-container-high) !important;
+    padding-left: 52px !important;
+    transform: translateX(4px) !important;
+}
+
+.atricon-submenu .atricon-menu-icon {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 16px !important;
+    padding: 6px !important;
+}
+
+.atricon-submenu .atricon-menu-icon .dashicons {
+    font-size: 16px !important;
+}
+
+/* Footer logo - Material Design 3 */
+.atricon-footer-logo {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    padding: 24px 20px !important;
+    border-top: 1px solid var(--md-sys-color-outline-variant) !important;
+    background: var(--md-sys-color-surface-container) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+    border-radius: var(--md-sys-shape-corner-large) var(--md-sys-shape-corner-large) 0 0 !important;
+    text-align: center !important;
+}
+
+.atricon-footer-logo img {
+    max-width: 40px !important;
+    max-height: 40px !important;
+    object-fit: contain !important;
+    filter: brightness(1.1) contrast(1.05) !important;
+    flex-shrink: 0 !important;
+    transition: all 400ms var(--md-sys-motion-easing-emphasized) !important;
+    border-radius: var(--md-sys-shape-corner-small) !important;
+}
+
+.atricon-footer-logo:hover img {
+    transform: scale(1.15) rotate(8deg) !important;
+    filter: brightness(1.3) contrast(1.1) !important;
+}
+
+.atricon-footer-text {
+    font: var(--md-sys-typescale-title-medium) !important;
+    color: var(--md-sys-color-on-surface) !important;
+    letter-spacing: 0.15px !important;
+    opacity: 0 !important;
+    transform: translateX(-12px) !important;
+    transition: all 400ms var(--md-sys-motion-easing-emphasized-decelerate) !important;
+    white-space: nowrap !important;
+    text-shadow: none !important;
+}
+
+#atricon-sidebar:hover .atricon-footer-text,
+#atricon-sidebar.always-show .atricon-footer-text {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+/* Search states - Material Design 3 Feedback */
+.atricon-menu-item.search-hidden {
+    display: none !important;
+}
+
+.atricon-search-results {
+    padding: 16px 20px !important;
+    color: var(--md-sys-color-on-surface-variant) !important;
+    font: var(--md-sys-typescale-body-medium) !important;
+    text-align: center !important;
+    background: var(--md-sys-color-primary-container) !important;
+    color: var(--md-sys-color-on-primary-container) !important;
+    border-radius: var(--md-sys-shape-corner-medium) !important;
+    margin: 12px !important;
+    border: 1px solid var(--md-sys-color-primary) !important;
+    box-shadow: var(--md-sys-elevation-level1) !important;
+}
+
+/* Responsive - Mobile First */
+@media (max-width: 768px) {
+    #atricon-sidebar {
+        width: 80px !important;
+        transform: translateX(-100%) !important;
+        transition: transform 400ms var(--md-sys-motion-easing-emphasized), 
+                    width 300ms var(--md-sys-motion-easing-standard) !important;
+        border-radius: 0 var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large) 0 !important;
+    }
+    
+    #atricon-sidebar.position-right {
+        transform: translateX(100%) !important;
+        border-radius: var(--md-sys-shape-corner-extra-large) 0 0 var(--md-sys-shape-corner-extra-large) !important;
+    }
+    
+    #atricon-sidebar.mobile-open {
+        transform: translateX(0) !important;
+        width: 340px !important;
+        box-shadow: var(--md-sys-elevation-level5) !important;
+    }
+}
+
+/* Mobile toggle - Material Design 3 FAB */
+.atricon-mobile-toggle {
+    position: fixed !important;
+    top: 24px !important;
+    left: 24px !important;
+    width: 56px !important;
+    height: 56px !important;
+    background: var(--md-sys-color-primary-container) !important;
+    color: var(--md-sys-color-on-primary-container) !important;
+    border: none !important;
+    border-radius: var(--md-sys-shape-corner-large) !important;
+    font-size: 24px !important;
+    cursor: pointer !important;
+    z-index: 1000000 !important;
+    box-shadow: var(--md-sys-elevation-level3) !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 300ms var(--md-sys-motion-easing-emphasized) !important;
+    backdrop-filter: blur(16px) !important;
+}
+
+.atricon-mobile-toggle.position-right {
+    left: auto !important;
+    right: 24px !important;
+}
+
+.atricon-mobile-toggle:hover {
+    background: var(--md-sys-color-primary) !important;
+    color: var(--md-sys-color-on-primary) !important;
+    transform: scale(1.05) !important;
+    box-shadow: var(--md-sys-elevation-level4) !important;
+}
+
+.atricon-mobile-toggle:active {
+    transform: scale(0.95) !important;
+}
+
+/* Overlay - Material Design 3 Scrim */
+.atricon-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.32) !important;
+    backdrop-filter: blur(4px) !important;
+    z-index: 999998 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: all 300ms var(--md-sys-motion-easing-standard) !important;
+}
+
+.atricon-overlay.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Show toggle on mobile */
+@media (max-width: 768px) {
+    .atricon-mobile-toggle {
+        display: flex !important;
+    }
+}
+
+/* Hide toggle on desktop */
+@media (min-width: 769px) {
+    .atricon-mobile-toggle {
+        display: none !important;
+    }
+}
+
+/* Material Design 3 Animations */
+@keyframes materialSlideInLeft {
+    from {
+        transform: translateX(-100%) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes materialSlideInRight {
+    from {
+        transform: translateX(100%) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+#atricon-sidebar {
+    animation: materialSlideInLeft 500ms var(--md-sys-motion-easing-emphasized-decelerate) !important;
+}
+
+#atricon-sidebar.position-right {
+    animation: materialSlideInRight 500ms var(--md-sys-motion-easing-emphasized-decelerate) !important;
+}
+
+/* Performance optimizations */
+#atricon-sidebar,
+.atricon-menu-link,
+.atricon-menu-icon,
+.atricon-submenu {
+    will-change: transform, opacity !important;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    #atricon-sidebar {
+        border-width: 2px !important;
+    }
+    
+    .atricon-menu-link {
+        border-width: 2px !important;
+    }
+    
+    .atricon-menu-link:focus-visible {
+        outline-width: 4px !important;
+    }
+}
+
+/* Dark theme optimization */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --md-sys-color-surface: #101418;
+        --md-sys-color-on-surface: #E1E2E8;
+    }
+}

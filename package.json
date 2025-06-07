@@ -1,0 +1,14 @@
+{
+  "name": "atricon-sidebar-menu",
+  "version": "1.0.0",
+  "description": "Menu lateral fixo para ATRICON com ícones e submenu",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./assets/tailwind/input.css -o ./assets/css/atricon-sidebar.css --watch",
+    "build": "npx tailwindcss -i ./assets/tailwind/input.css -o ./assets/css/atricon-sidebar.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.35"
+  }
+} 

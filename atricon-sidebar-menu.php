@@ -124,7 +124,12 @@ new ATRICON_Menu();
 
 // 1) Registra localização e cria menu ATRICON se não existir
 add_action('init', function(){
-    // Cria o menu ATRICON se não existir
+    // Registra a localização do menu
+    register_nav_menus([
+        'atrcn-sidebar' => 'ATRICON Sidebar Menu'
+    ]);
+
+    // Só cria o menu ATRICON se não existir
     if (!wp_get_nav_menu_object('ATRICON')) {
         $menu_id = wp_create_nav_menu('ATRICON');
         // Adiciona itens iniciais
@@ -153,6 +158,10 @@ add_action('init', function(){
                 }
             }
         }
+        // Atribui o menu à localização
+        $locations = get_theme_mod('nav_menu_locations');
+        $locations['atrcn-sidebar'] = $menu_id;
+        set_theme_mod('nav_menu_locations', $locations);
     }
 });
 
@@ -1319,7 +1328,18 @@ add_action('init', function(){
                             <i class="material-icons" id="clear-search" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none; color: #666;">close</i>
                         </div>
                     </div>
-                    <ul class="menu" id="menu-list"></ul>
+                    <ul class="menu" id="menu-list">
+                    <?php
+                    wp_nav_menu([
+                        'theme_location' => 'atrcn-sidebar',
+                        'container' => false,
+                        'items_wrap' => '%3$s',
+                        'walker' => new ATRICON_Walker_Visual(),
+                        'fallback_cb' => false,
+                        'menu' => 'ATRICON'
+                    ]);
+                    ?>
+                    </ul>
                     <div class="sidebar-footer">
                         <img src="<?php echo esc_url($logo_url); ?>" alt="ATRICON Logo" class="sidebar-logo" />
                         <span class="sidebar-brand-text">ATRICON</span>
@@ -1465,18 +1485,15 @@ add_action('init', function(){
         if ($existing_menu) {
             wp_delete_nav_menu($existing_menu->term_id);
         }
-        
         // Recria o menu com todas as configurações
         $menu_id = wp_create_nav_menu('ATRICON');
         $items = atricon_get_menu_items();
-
         foreach($items as $i){
             $pid = wp_update_nav_menu_item($menu_id, 0, [
                 'menu-item-title'  => $i['t'],
                 'menu-item-url'    => home_url('/atricon/' . $i['v']),
                 'menu-item-status' => 'publish',
             ]);
-            
             // Configura o ícone do Menu Icons se estiver ativo
             if (atricon_menu_icons_active() && !empty($i['icon'])) {
                 update_post_meta($pid, 'menu-icons', [
@@ -1490,7 +1507,6 @@ add_action('init', function(){
                     'image_size' => 'thumbnail'
                 ]);
             }
-            
             if(!empty($i['c'])){
                 foreach($i['c'] as $c){
                     $cid = wp_update_nav_menu_item($menu_id, 0, [
@@ -1499,7 +1515,6 @@ add_action('init', function(){
                         'menu-item-parent-id' => $pid,
                         'menu-item-status'    => 'publish',
                     ]);
-                    
                     // Configura o ícone do submenu se estiver ativo
                     if (atricon_menu_icons_active() && !empty($c['icon'])) {
                         update_post_meta($cid, 'menu-icons', [
@@ -1516,7 +1531,6 @@ add_action('init', function(){
                 }
             }
         }
-
         // Reatribui à localização
         set_theme_mod('nav_menu_locations', array_merge(
             (array)get_theme_mod('nav_menu_locations'), ['atrcn-sidebar'=>$menu_id]
@@ -1755,6 +1769,68 @@ add_action('init', function(){
             }
         } catch (Exception $e) {
             error_log('ATRICON Sidebar Menu - Erro na ativação: ' . $e->getMessage());
+        }
+    });
+
+    // Novo walker para visual igual ao antigo
+    class ATRICON_Walker_Visual extends Walker_Nav_Menu {
+        function start_lvl( &$output, $depth = 0, $args = null ) {
+            $output .= "\n<ul class='submenu-list'>\n";
+        }
+        function end_lvl( &$output, $depth = 0, $args = null ) {
+            $output .= "</ul>\n";
+        }
+        function start_el( &$output, $item, $depth = 0, $args = null, $id = 0 ) {
+            $slug = sanitize_title($item->title);
+            $icon = !empty($item->attr_title) ? esc_html($item->attr_title) : 'menu';
+            $attributes  = !empty($item->url) ? ' href="' . esc_url($item->url) . '"' : '';
+            $attributes .= !empty($item->target) ? ' target="' . esc_attr($item->target) . '"' : '';
+            $attributes .= !empty($item->xfn) ? ' rel="' . esc_attr($item->xfn) . '"' : '';
+            $attributes .= !empty($item->title) ? ' title="' . esc_attr($item->title) . '"' : '';
+            $output .= "<li class='menu-item' data-submenu='{$slug}'>";
+            $output .= "<a{$attributes}>";
+            $output .= "<i class='material-icons'>" . $icon . "</i>";
+            $output .= "<span class='label'>" . esc_html($item->title) . "</span>";
+            $output .= "</a>";
+        }
+        function end_el( &$output, $item, $depth = 0, $args = null ) {
+            $output .= "</li>\n";
+        }
+    }
+
+    // Hook para atualizar o menu quando houver mudanças
+    add_action('wp_update_nav_menu', function($menu_id) {
+        $menu = wp_get_nav_menu_object($menu_id);
+        if ($menu && $menu->slug === 'atricon') {
+            // Força a atualização dos ícones se Menu Icons estiver ativo
+            if (atricon_menu_icons_active()) {
+                atricon_update_menu_icons();
+            }
+        }
+    });
+
+    // Hook para atualizar o menu quando um item é adicionado/removido
+    add_action('wp_update_nav_menu_item', function($menu_id, $menu_item_db_id) {
+        $menu = wp_get_nav_menu_object($menu_id);
+        if ($menu && $menu->slug === 'atricon') {
+            // Força a atualização dos ícones se Menu Icons estiver ativo
+            if (atricon_menu_icons_active()) {
+                atricon_update_menu_icons();
+            }
+        }
+    }, 10, 2);
+
+    // Hook para atualizar o menu quando um item é deletado
+    add_action('wp_delete_nav_menu_item', function($menu_item_id) {
+        $menu_item = wp_get_nav_menu_item($menu_item_id);
+        if ($menu_item) {
+            $menu = wp_get_nav_menu_object($menu_item->menu_id);
+            if ($menu && $menu->slug === 'atricon') {
+                // Força a atualização dos ícones se Menu Icons estiver ativo
+                if (atricon_menu_icons_active()) {
+                    atricon_update_menu_icons();
+                }
+            }
         }
     });
 

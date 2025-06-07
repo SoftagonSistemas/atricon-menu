@@ -18,7 +18,7 @@ jobs:
       - name: Extract version from plugin file
         id: get_version
         run: |
-          VERSION=$(grep -E "^\s*\*\s*Version:\s*" atricon-sidebar-menu.php | awk '{ print $NF }')
+          VERSION=$(grep -E "^\s*\*\s*Version:\s*" barra-acessibilidade.php | awk '{ print $NF }')
           echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
           echo "Plugin version: $VERSION"
 
@@ -34,7 +34,7 @@ jobs:
 
       - name: Create zip file
         run: |
-          zip -r atricon-sidebar-menu.zip . -x '*.git*' '*.github*' '*node_modules*' '*.zip'
+          zip -r barra-acessibilidade.zip . -x '*.git*' '*.github*' '*node_modules*' '*.zip'
 
       - name: Create Git tag
         if: env.EXISTS == 'false'
@@ -49,7 +49,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.PLUGIN_VERSION }}
-          name: atricon-sidebar-menu v${{ env.PLUGIN_VERSION }}
-          files: atricon-sidebar-menu.zip
+          name: barra-acessibilidade v${{ env.PLUGIN_VERSION }}
+          files: barra-acessibilidade.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
