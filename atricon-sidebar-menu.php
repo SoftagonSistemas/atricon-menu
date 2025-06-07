@@ -1,10 +1,37 @@
 <?php
-    /** * Plugin Name: ATRICON Sidebar Menu
-     * Description: Menu lateral fixo para ATRICON com ícones, submenu, busca em tempo real dos itens do WordPress e comportamento configurável (apenas ícones ou sempre visível). Versão melhorada com design responsivo, UX otimizada e prevenção de cortes.
-     * Version:     2.3
-     * Author:      Hermes
-     * Text Domain: atricon-sidebar-menu
-     */
+/*
+ * Plugin Name: ATRICON Sidebar Menu
+ * Description: Menu lateral fixo para ATRICON com ícones, submenu, busca em tempo real dos itens do WordPress e comportamento configurável (apenas ícones ou sempre visível). Versão melhorada com design responsivo, UX otimizada e prevenção de cortes.
+ * Version:     1.1
+ * Author:      Hermes
+ * Text Domain: atricon-sidebar-menu
+ * License:     GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * Este programa é software livre; você pode redistribuí-lo e/ou modificá-lo
+ * sob os termos da Licença Pública Geral GNU, conforme publicada pela Free Software Foundation;
+ * tanto a versão 2 da Licença, como (a seu critério) qualquer versão posterior.
+ *
+ * Este programa é distribuído na expectativa de que seja útil, mas SEM NENHUMA GARANTIA;
+ * sem mesmo a garantia implícita de COMERCIALIZAÇÃO ou ADEQUAÇÃO A UM DETERMINADO FIM.
+ * Veja a Licença Pública Geral GNU para mais detalhes.
+ *
+ * Você deve ter recebido uma cópia da Licença Pública Geral GNU junto com este programa;
+ * se não, veja <https://www.gnu.org/licenses/>.
+ */
+
+require_once plugin_dir_path(__FILE__) . 'includes/class-atricon-menu.php';
+
+// Inicializa a classe do menu
+new ATRICON_Menu();
+
+// AVISO SOBRE USO DE LOGO:
+// O uso do logo e nome ATRICON neste plugin requer autorização da entidade ATRICON.
+// Caso não possua autorização, remova ou substitua o logo e referências à marca.
+
+// AVISO SOBRE CRIAÇÃO AUTOMÁTICA DE MENU:
+// Este plugin cria automaticamente um menu chamado "ATRICON" ao ser ativado.
+// O usuário pode gerenciar ou remover este menu nas configurações do plugin ou pelo painel de menus do WordPress.
 
     // Função auxiliar para verificar se Menu Icons está ativo
     function atricon_menu_icons_active() {
@@ -13,6 +40,13 @@
         }
         return is_plugin_active('menu-icons/menu-icons.php');
     }
+
+    // Adiciona link de configurações ao lado do "Desativar" na tela de plugins
+    add_filter('plugin_action_links_atricon-sidebar-menu/atricon-sidebar-menu.php', function($links) {
+        $settings_link = '<a href="' . esc_url(admin_url('options-general.php?page=atricon-sidebar-menu')) . '">' . esc_html__('Settings', 'atricon-sidebar-menu') . '</a>';
+        array_unshift($links, $settings_link);
+        return $links;
+    });
 
     // 0) Painel de Configurações: posição do menu
     add_action('admin_menu', function() {
@@ -34,22 +68,13 @@
                     echo '<div class="updated"><p>Comportamento do menu atualizado!</p></div>';
                 }
                 
-                if (isset($_POST['atricon_update_icons']) && atricon_menu_icons_active()) {
-                    check_admin_referer('atricon_sidebar_save');
-                    atricon_update_menu_icons();
-                    echo '<div class="updated"><p>Ícones atualizados com sucesso!</p></div>';
-                }
+               
                 if (isset($_POST['atricon_reset_menu'])) {
                     check_admin_referer('atricon_sidebar_save');
                     atricon_reset_menu();
                     echo '<div class="updated"><p>Menu ATRICON resetado com sucesso!</p></div>';
                 }
-                
-                if (isset($_POST['atricon_force_update_icons']) && atricon_menu_icons_active()) {
-                    check_admin_referer('atricon_sidebar_save');
-                    atricon_force_update_all_icons();
-                    echo '<div class="updated"><p>Ícones forçados a atualizar com sucesso!</p></div>';
-                }
+           
                 
                 $pos = get_option('atricon_sidebar_position', 'left');
                 $behavior = get_option('atricon_sidebar_behavior', 'icon_only');
@@ -57,12 +82,6 @@
                 ?>
                 <div class="wrap">
                     <h1>ATRICON Sidebar - Configurações</h1>
-                    <?php if (!atricon_menu_icons_active()): ?>
-                    <div class="notice notice-warning">
-                        <p><strong>Plugin Menu Icons necessário:</strong> Para o funcionamento completo do ATRICON Sidebar, instale e ative o plugin <a href="<?php echo admin_url('plugin-install.php?s=menu+icons&tab=search&type=term'); ?>" target="_blank">Menu Icons</a>.</p>
-                        <p><em>Com o Menu Icons ativo, o menu ATRICON será criado automaticamente com ícones Dashicons já configurados para cada item!</em></p>
-                    </div>
-                    <?php endif; ?>
                     
                     <form method="post">
                         <?php wp_nonce_field('atricon_sidebar_save'); ?>
@@ -83,25 +102,6 @@
                                 </td>
                             </tr>
                         </table>
-                        <?php if (atricon_menu_icons_active()): ?>
-                        <h3>Gerenciar Ícones</h3>
-                        <p>O plugin Menu Icons está ativo. Você pode reconfigurar os ícones Dashicons do menu ATRICON automaticamente.</p>
-                        <table class="form-table">                        <tr valign="top">
-                                <th scope="row">Reconfigurar Ícones</th>
-                                <td>
-                                    <input type="submit" name="atricon_update_icons" class="button-secondary" value="Aplicar Ícones Dashicons Padrão">
-                                    <p class="description">Clique para aplicar os ícones Dashicons padrão ao menu ATRICON. Isso não substituirá ícones personalizados já configurados.</p>
-                                </td>
-                            </tr>
-                            <tr valign="top">
-                                <th scope="row">Forçar Atualização</th>
-                                <td>
-                                    <input type="submit" name="atricon_force_update_icons" class="button-secondary" value="Forçar Atualização de Todos os Ícones">
-                                    <p class="description">Use esta opção se os ícones não estão aparecendo corretamente no site. Isso irá sobrescrever TODOS os ícones com os padrões.</p>
-                                </td>
-                            </tr>
-                        </table>
-                        <?php endif; ?>
                         <h3>Gerenciar Menu</h3>
                         <p>Use as opções abaixo para gerenciar o menu ATRICON.</p>
                         <table class="form-table">
@@ -124,12 +124,11 @@
 
 // 1) Registra localização e cria menu ATRICON se não existir
 add_action('init', function(){
-    register_nav_menu('atrcn-sidebar','ATRICON Sidebar Menu');
     // Cria o menu ATRICON se não existir
     if (!wp_get_nav_menu_object('ATRICON')) {
         $menu_id = wp_create_nav_menu('ATRICON');
         // Adiciona itens iniciais
-        $items = atricon_get_menu_items();
+        $items = (new ATRICON_Menu())->get_menu_items();
         $parent_ids = [];
         foreach ($items as $item) {
             $args = [
@@ -156,62 +155,6 @@ add_action('init', function(){
         }
     }
 });
-
-    // Função centralizada para definir os itens do menu
-    function atricon_get_menu_items() {
-        return [
-            ['t'=>'BUSCA_PLACEHOLDER','v'=>'busca-servico','icon'=>'search'], // Caixa de busca no topo
-            ['t'=>'TRANSPARÊNCIA','v'=>'transparencia','icon'=>'visibility'],
-            ['t'=>'Organização Administrativa','v'=>'organizacao','icon'=>'networking','c'=>[
-                ['t'=>'Estrutura Organizacional','v'=>'estrutura-organizacional','code'=>'2.1 a 2.5','icon'=>'chart-pie'],
-                ['t'=>'Recursos Humanos','v'=>'recursos-humanos','code'=>'6.1 a 6.6','icon'=>'admin-users'],
-                ['t'=>'Convênios e Transferências','v'=>'convenios-transferencias','code'=>'5.1 a 5.3','icon'=>'admin-links'],
-            ]],
-            ['t'=>'Normas e Leis','v'=>'leis','icon'=>'admin-page','c'=>[
-                ['t'=>'Legislações e Atos','v'=>'legislacoes','code'=>'2.6','icon'=>'media-document'],
-                ['t'=>'LAI','v'=>'lai','code'=>'Lei 12.527/2011','icon'=>'admin-network'],
-                ['t'=>'LRF','v'=>'lrf','code'=>'LC 101/2000','icon'=>'businessman'],
-                ['t'=>'LGPD e Governo Digital','v'=>'lgpd-governo','code'=>'15.1 a 15.6','icon'=>'shield-alt'],
-            ]],
-            ['t'=>'Contabilidade Pública','v'=>'contabilidade','icon'=>'money-alt','c'=>[
-                ['t'=>'Receitas','v'=>'receitas','code'=>'3.1 a 3.3','icon'=>'cart'],
-                ['t'=>'Despesas','v'=>'despesas','code'=>'4.1 a 4.2','icon'=>'money'],
-                ['t'=>'Renúncias de Receitas','v'=>'renuncias','code'=>'16.1 a 16.4','icon'=>'percent'],
-                ['t'=>'Dívida Ativa','v'=>'divida-ativa','code'=>'3.3','icon'=>'warning'],
-            ]],
-            ['t'=>'Gestão de Recursos','v'=>'recursos','icon'=>'chart-bar','c'=>[
-                ['t'=>'Planejamento e Contas','v'=>'planejamento','code'=>'11.1 a 11.10','icon'=>'clipboard'],
-                ['t'=>'Emendas Parlamentares','v'=>'emendas','code'=>'17.1 a 17.2','icon'=>'edit'],
-            ]],
-            ['t'=>'Contratos e Licitações','v'=>'contratos','icon'=>'media-text','c'=>[
-                ['t'=>'Licitações e Contratos','v'=>'licitacoes','code'=>'8.1 a 9.4','icon'=>'media-document'],
-                ['t'=>'Ordem Cronológica','v'=>'ordem-cronologica','code'=>'9.4','icon'=>'calendar-alt'],
-            ]],
-            ['t'=>'Despesas com Pessoal','v'=>'pessoal','icon'=>'admin-users','c'=>[
-                ['t'=>'Diárias e Passagens','v'=>'diarias','code'=>'7.1 a 7.2','icon'=>'airplane'],
-                ['t'=>'Valores das Diárias','v'=>'valores-diarias','code'=>'7.2','icon'=>'calculator'],
-            ]],
-            ['t'=>'Cidadania e Acesso','v'=>'cidadania','icon'=>'admin-users','c'=>[
-                ['t'=>'SIC','v'=>'sic','code'=>'12.1 a 12.9','icon'=>'info'],
-                ['t'=>'Ouvidorias','v'=>'ouvidorias','code'=>'14.1 a 14.3','icon'=>'microphone'],
-                ['t'=>'Perguntas Frequentes','v'=>'faq','code'=>'2.7','icon'=>'editor-help'],
-                ['t'=>'Carta de Serviços ao Cidadão','v'=>'carta-servicos','code'=>'','icon'=>'email-alt'],
-            ]],
-            ['t'=>'Publicações Oficiais','v'=>'publicacoes','icon'=>'media-text','c'=>[
-                ['t'=>'Diário Oficial','v'=>'diario-oficial','code'=>'Lei 4.965/1966','icon'=>'book-alt'],
-                ['t'=>'Transparência COVID-19','v'=>'transparencia-covid','code'=>'PRSE/MPF 12/2022','icon'=>'admin-site-alt3'],
-            ]],
-            ['t'=>'Indicadores e Avaliação','v'=>'avaliacao','icon'=>'awards','c'=>[
-                ['t'=>'Radar da Transparência Pública','v'=>'radar-transparencia','code'=>'2.9','icon'=>'visibility'],
-                ['t'=>'Dados Abertos','v'=>'dados-abertos','code'=>'CGU','icon'=>'database-view'],
-            ]],
-            ['t'=>'Serviços Essenciais','v'=>'servicos','icon'=>'building','c'=>[
-                ['t'=>'Obras','v'=>'obras','code'=>'10.1 a 10.4','icon'=>'hammer'],
-                ['t'=>'Saúde','v'=>'saude','code'=>'18.1 a 18.3','icon'=>'heart'],
-                ['t'=>'Educação','v'=>'educacao','code'=>'19.1 a 19.2','icon'=>'welcome-learn-more'],
-            ]],
-        ];
-    }
 
     // Adiciona estilos CSS para o menu lateral
     add_action('wp_enqueue_scripts', function() {
@@ -270,7 +213,7 @@ add_action('init', function(){
         // pois são gerenciados de forma mais completa no hook wp_head.
         // Este bloco foca principalmente nos ajustes de margem do corpo da página.
 
-        wp_add_inline_style('dashicons', $css_main);
+        wp_add_inline_style('atricon-material-icons', $css_main);
     });
 
     // Adiciona classes ao body para controlar o comportamento e posição do menu
@@ -291,6 +234,12 @@ add_action('init', function(){
 
     // 2) Na ativação, cria o menu e popula os itens
     register_activation_hook(__FILE__, function(){
+        // Primeiro cria as páginas
+        $menu = new ATRICON_Menu();
+        $map = $menu->create_menu_pages_and_get_map();
+        $menu->create_menu_with_pages($map);
+
+        // Depois cria o menu
         $name = 'ATRICON';
         if ( wp_get_nav_menu_object($name) ) return;
         $menu_id = wp_create_nav_menu($name);
@@ -300,46 +249,19 @@ add_action('init', function(){
         foreach($items as $i){
             $pid = wp_update_nav_menu_item($menu_id, 0, [
                 'menu-item-title'  => $i['t'],
-                'menu-item-url'    => '#'.$i['v'],
+                'menu-item-url'    => home_url('/atricon/' . $i['v']),
                 'menu-item-status' => 'publish',
             ]);
-            
-            // Configura o ícone do Menu Icons se estiver ativo
-            if (atricon_menu_icons_active() && !empty($i['icon'])) {
-                update_post_meta($pid, 'menu-icons', [
-                    'type' => 'dashicons',
-                    'icon' => 'dashicons-' . $i['icon'],
-                    'hide_label' => '',
-                    'position' => 'before',
-                    'vertical_align' => 'middle',
-                    'font_size' => '1',
-                    'svg_width' => '1',
-                    'image_size' => 'thumbnail'
-                ]);
-            }
             
             if(!empty($i['c'])){
                 foreach($i['c'] as $c){
                     $cid = wp_update_nav_menu_item($menu_id, 0, [
                         'menu-item-title'     => $c['t'].' '.($c['code']? "({$c['code']})":''),
-                        'menu-item-url'       => '#'.$c['v'],
+                        'menu-item-url'       => home_url('/atricon/' . $i['v'] . '/' . $c['v']),
                         'menu-item-parent-id' => $pid,
                         'menu-item-status'    => 'publish',
                     ]);
                     
-                    // Configura o ícone do submenu se estiver ativo
-                    if (atricon_menu_icons_active() && !empty($c['icon'])) {
-                        update_post_meta($cid, 'menu-icons', [
-                            'type' => 'dashicons',
-                            'icon' => 'dashicons-' . $c['icon'],
-                            'hide_label' => '',
-                            'position' => 'before',
-                            'vertical_align' => 'middle',
-                            'font_size' => '0.9',
-                            'svg_width' => '1',
-                            'image_size' => 'thumbnail'
-                        ]);
-                    }
                 }
             }
         }
@@ -637,7 +559,7 @@ add_action('init', function(){
         }
         
         /* === ÍCONES UNIFICADOS === */
-        .atricon-icon, ._mi._before {
+        .atricon-icon, .material-icons {
             width: 24px;
             height: 24px;
             text-align: center;
@@ -657,21 +579,21 @@ add_action('init', function(){
             overflow: hidden;
             transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .atricon-link:hover .atricon-icon, .atricon-link:hover ._mi._before {
+        .atricon-link:hover .atricon-icon, .atricon-link:hover .material-icons {
             color: #2271b1;
             background: none !important;
             transform: scale(1.1) rotate(2deg);
         }
         <?php if ($behavior === 'icon_only'): ?>
-        #atricon-sidebar:hover .atricon-icon, #atricon-sidebar:hover ._mi._before { margin-right: 12px; }
+        #atricon-sidebar:hover .atricon-icon, #atricon-sidebar:hover .material-icons { margin-right: 12px; }
         <?php else: ?>
-        .atricon-icon, ._mi._before { margin-right: 12px; }
+        .atricon-icon, .material-icons { margin-right: 12px; }
         <?php endif; ?>
         
         /* === VISIBILIDADE DE TEXTOS === */
         <?php if ($behavior === 'icon_only'): ?>
         #atricon-sidebar .atricon-link .menu-icon-label,
-        #atricon-sidebar .atricon-link span:not([class*="dashicons"]):not([class*="_mi"]),
+        #atricon-sidebar .atricon-link span:not([class*="material-icons"]):not([class*="_mi"]),
         #atricon-sidebar .atricon-label,
         .atricon-brand-text {
             opacity: 0;
@@ -681,7 +603,7 @@ add_action('init', function(){
             transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #atricon-sidebar:hover .atricon-link .menu-icon-label,
-        #atricon-sidebar:hover .atricon-link span:not([class*="dashicons"]):not([class*="_mi"]),
+        #atricon-sidebar:hover .atricon-link span:not([class*="material-icons"]):not([class*="_mi"]),
         #atricon-sidebar:hover .atricon-label,
         #atricon-sidebar:hover .atricon-brand-text {
             opacity: 1;
@@ -690,7 +612,7 @@ add_action('init', function(){
         #atricon-sidebar:not(:hover) .atricon-link { justify-content: center; padding: 16px 12px; }
         <?php else: ?>
         #atricon-sidebar .atricon-link .menu-icon-label,
-        #atricon-sidebar .atricon-link span:not([class*="dashicons"]):not([class*="_mi"]),
+        #atricon-sidebar .atricon-link span:not([class*="material-icons"]):not([class*="_mi"]),
         #atricon-sidebar .atricon-label,
         .atricon-brand-text {
             opacity: 1;
@@ -700,7 +622,7 @@ add_action('init', function(){
         <?php endif; ?>
         /* Garante que o texto do submenu apareça quando o submenu está visível */
         .atricon-item:hover > .atricon-submenu .atricon-link .menu-icon-label,
-        .atricon-item:hover > .atricon-submenu .atricon-link span:not([class*="dashicons"]):not([class*="_mi"]),
+        .atricon-item:hover > .atricon-submenu .atricon-link span:not([class*="material-icons"]):not([class*="_mi"]),
         .atricon-item:hover > .atricon-submenu .atricon-link .atricon-label {
           opacity: 1 !important;
           width: auto !important;
@@ -708,7 +630,7 @@ add_action('init', function(){
         }
         /* Garante que o texto do item pai apareça no hover */
         .atricon-item:hover > .atricon-link .menu-icon-label,
-        .atricon-item:hover > .atricon-link span:not([class*="dashicons"]):not([class*="_mi"]),
+        .atricon-item:hover > .atricon-link span:not([class*="material-icons"]):not([class*="_mi"]),
         .atricon-item:hover > .atricon-link .atricon-label {
           opacity: 1 !important;
           width: auto !important;
@@ -937,10 +859,6 @@ add_action('init', function(){
     add_action('wp_enqueue_scripts', function(){
         // Garante que o jQuery está enfileirado antes de qualquer script do plugin
         wp_enqueue_script('jquery');
-        // Se Menu Icons está ativo, garante que seus estilos sejam carregados
-        if (atricon_menu_icons_active() && function_exists('menu_icons')) {
-            wp_enqueue_style('menu-icons');
-        }
         // Fallback: se jQuery não estiver carregado, carrega do CDN
         ?>
         <script type="text/javascript">
@@ -976,14 +894,14 @@ add_action('init', function(){
                 // Adiciona botão toggle para mobile
                 function addMobileToggle() {
                     if ($(window).width() <= 768 && !$('.atricon-mobile-toggle').length) {
-                        $('body').prepend('<button class="atricon-mobile-toggle" aria-label="Toggle Menu"><i class="dashicons dashicons-menu"></i></button>');
+                        $('body').prepend('<button class="atricon-mobile-toggle" aria-label="Toggle Menu"><i class="material-icons">menu</i></button>');
                     }
                 }
                 
                 // Controla sidebar mobile
                 $(document).on('click', '.atricon-mobile-toggle', function() {
                     $('#atricon-sidebar').toggleClass('mobile-active');
-                    $(this).find('i').toggleClass('dashicons-menu dashicons-no-alt');
+                    $(this).find('i').text($(this).find('i').text() === 'menu' ? 'close' : 'menu');
                 });
                 
                 // Fecha sidebar ao clicar fora (mobile)
@@ -992,7 +910,7 @@ add_action('init', function(){
                         !$(e.target).closest('#atricon-sidebar, .atricon-mobile-toggle').length &&
                         $('#atricon-sidebar').hasClass('mobile-active')) {
                         $('#atricon-sidebar').removeClass('mobile-active');
-                        $('.atricon-mobile-toggle i').removeClass('dashicons-no-alt').addClass('dashicons-menu');
+                        $('.atricon-mobile-toggle i').text('menu');
                     }
                 });
                 
@@ -1264,7 +1182,7 @@ add_action('init', function(){
                             // Fecha sidebar mobile
                             if ($(window).width() <= 768) {
                                 $('#atricon-sidebar').removeClass('mobile-active');
-                                $('.atricon-mobile-toggle i').removeClass('dashicons-no-alt').addClass('dashicons-menu');
+                                $('.atricon-mobile-toggle i').text('menu');
                             }
                         }
                     }
@@ -1385,7 +1303,6 @@ add_action('init', function(){
     // Garantir que os dashicons, CSS e JS do menu sejam carregados apenas no frontend
     if (!is_admin()) {
         add_action('wp_enqueue_scripts', function() {
-            wp_enqueue_style('dashicons');
             wp_enqueue_style('atricon-material-icons', 'https://fonts.googleapis.com/icon?family=Material+Icons', [], null);
             wp_enqueue_style('atricon-roboto', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap', [], null);
             wp_enqueue_style('atricon-sidebar', plugin_dir_url(__FILE__) . 'includes/sidebar.css', [], null);
@@ -1403,7 +1320,15 @@ add_action('init', function(){
                             <i class="material-icons" id="clear-search" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none; color: #666;">close</i>
                         </div>
                     </div>
-                    <ul class="menu" id="menu-list"></ul>
+                    <?php
+                    wp_nav_menu([
+                        'theme_location' => 'atrcn-sidebar',
+                        'container' => false,
+                        'menu_class' => 'menu',
+                        'walker' => class_exists('ATRICON_Walker_Main') ? new ATRICON_Walker_Main() : '',
+                        'fallback_cb' => false
+                    ]);
+                    ?>
                     <div class="sidebar-footer">
                         <img src="<?php echo esc_url($logo_url); ?>" alt="ATRICON Logo" class="sidebar-logo" />
                         <span class="sidebar-brand-text">ATRICON</span>
@@ -1443,8 +1368,8 @@ add_action('init', function(){
                 // Força a atualização do ícone mesmo se já existir (para corrigir problemas)
                 $font_size = $item->menu_item_parent == 0 ? '1' : '0.9';
                 $icon_data = [
-                    'type' => 'dashicons',
-                    'icon' => 'dashicons-' . $icon_map[$item->url],
+                    'type' => 'material-icons',
+                    'icon' => $icon_map[$item->url],
                     'hide_label' => '',
                     'position' => 'before',
                     'vertical_align' => 'middle',
@@ -1480,8 +1405,8 @@ add_action('init', function(){
             if (isset($icon_map[$item->url])) {
                 $font_size = $item->menu_item_parent == 0 ? '1' : '0.9';
                 $icon_data = [
-                    'type' => 'dashicons',
-                    'icon' => 'dashicons-' . $icon_map[$item->url],
+                    'type' => 'material-icons',
+                    'icon' => $icon_map[$item->url],
                     'hide_label' => '',
                     'position' => 'before',
                     'vertical_align' => 'middle',
@@ -1494,7 +1419,7 @@ add_action('init', function(){
                 delete_post_meta($item->ID, 'menu-icons');
                 add_post_meta($item->ID, 'menu-icons', $icon_data);
                 
-                error_log("ATRICON FORCE: Ícone forçado para {$item->title}: dashicons-" . $icon_map[$item->url]);
+                error_log("ATRICON FORCE: Ícone forçado para {$item->title}: material-icons-" . $icon_map[$item->url]);
             }
         }
     }
@@ -1544,9 +1469,6 @@ add_action('init', function(){
 
     // Função para resetar o menu ATRICON
     function atricon_reset_menu() {
-        // Limpa meta data antiga primeiro
-        atricon_cleanup_old_meta();
-        
         // Remove o menu existente se houver
         $existing_menu = wp_get_nav_menu_object('ATRICON');
         if ($existing_menu) {
@@ -1560,15 +1482,15 @@ add_action('init', function(){
         foreach($items as $i){
             $pid = wp_update_nav_menu_item($menu_id, 0, [
                 'menu-item-title'  => $i['t'],
-                'menu-item-url'    => '#'.$i['v'],
+                'menu-item-url'    => home_url('/atricon/' . $i['v']),
                 'menu-item-status' => 'publish',
             ]);
             
             // Configura o ícone do Menu Icons se estiver ativo
             if (atricon_menu_icons_active() && !empty($i['icon'])) {
                 update_post_meta($pid, 'menu-icons', [
-                    'type' => 'dashicons',
-                    'icon' => 'dashicons-' . $i['icon'],
+                    'type' => 'material-icons',
+                    'icon' => $i['icon'],
                     'hide_label' => '',
                     'position' => 'before',
                     'vertical_align' => 'middle',
@@ -1581,8 +1503,8 @@ add_action('init', function(){
             if(!empty($i['c'])){
                 foreach($i['c'] as $c){
                     $cid = wp_update_nav_menu_item($menu_id, 0, [
-                        'menu-item-title'         => $c['t'].' '.($c['code']? "({$c['code']})":''),
-                        'menu-item-url'       => '#'.$c['v'],
+                        'menu-item-title'     => $c['t'].' '.($c['code']? "({$c['code']})":''),
+                        'menu-item-url'       => home_url('/atricon/' . $i['v'] . '/' . $c['v']),
                         'menu-item-parent-id' => $pid,
                         'menu-item-status'    => 'publish',
                     ]);
@@ -1590,8 +1512,8 @@ add_action('init', function(){
                     // Configura o ícone do submenu se estiver ativo
                     if (atricon_menu_icons_active() && !empty($c['icon'])) {
                         update_post_meta($cid, 'menu-icons', [
-                            'type' => 'dashicons',
-                            'icon' => 'dashicons-' . $c['icon'],
+                            'type' => 'material-icons',
+                            'icon' => $c['icon'],
                             'hide_label' => '',
                             'position' => 'before',
                             'vertical_align' => 'middle',
@@ -1609,7 +1531,6 @@ add_action('init', function(){
             (array)get_theme_mod('nav_menu_locations'), ['atrcn-sidebar'=>$menu_id]
         ));
     }
-
     // Função auxiliar para obter o ícone correto baseado no item do menu
     function atricon_get_icon_for_item($item) {
         $items = atricon_get_menu_items();
@@ -1617,11 +1538,11 @@ add_action('init', function(){
         
         // Busca o ícone baseado na URL do item
         if (isset($icon_map[$item->url])) {
-            return 'dashicons-' . $icon_map[$item->url];
+            return 'material-icons-' . $icon_map[$item->url];
         }
         
         // Fallback padrão
-        return 'dashicons-admin-generic';
+        return 'material-icons-menu';
     }
 
     // Função de debug para verificar ícones (pode ser removida depois)
@@ -1795,3 +1716,54 @@ add_action('init', function(){
         </script>
         <?php
     });
+
+    // Função para obter os itens do menu
+    function atricon_get_menu_items() {
+        return [
+            [
+                't' => 'Início',
+                'v' => 'inicio',
+                'icon' => 'home'
+            ],
+            [
+                't' => 'Serviços',
+                'v' => 'servicos',
+                'icon' => 'build',
+                'c' => [
+                    [
+                        't' => 'Serviço 1',
+                        'v' => 'servico-1',
+                        'code' => 'S001',
+                        'icon' => 'assignment'
+                    ],
+                    [
+                        't' => 'Serviço 2',
+                        'v' => 'servico-2',
+                        'code' => 'S002',
+                        'icon' => 'assignment'
+                    ]
+                ]
+            ],
+            [
+                't' => 'Contato',
+                'v' => 'contato',
+                'icon' => 'contact_mail'
+            ]
+        ];
+    }
+
+    // Hook de ativação corrigido
+    register_activation_hook(__FILE__, function(){
+        try {
+            $menu = new ATRICON_Menu();
+            $map = $menu->create_menu_pages_and_get_map();
+            $menu->create_menu_with_pages($map);
+            // Força a atualização dos ícones se Menu Icons estiver ativo
+            if (atricon_menu_icons_active()) {
+                atricon_force_update_all_icons();
+            }
+        } catch (Exception $e) {
+            error_log('ATRICON Sidebar Menu - Erro na ativação: ' . $e->getMessage());
+        }
+    });
+
