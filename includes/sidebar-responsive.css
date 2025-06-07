@@ -1,0 +1,30 @@
+.menu > .menu-item > a {
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  display: flex;
+  align-items: center;
+}
+.sidebar.expand .menu > .menu-item > a {
+  max-width: 220px;
+}
+.menu > .menu-item > a .label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+  display: inline-block;
+}
+@media (max-width: 600px) {
+  .menu > .menu-item > a {
+    font-size: 13px;
+    max-width: 120px;
+  }
+  .sidebar.expand .menu > .menu-item > a {
+    max-width: 160px;
+  }
+  .menu > .menu-item > a .label {
+    max-width: 80px;
+  }
+}

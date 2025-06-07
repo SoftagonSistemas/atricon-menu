@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu ATRICON</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8fafc;
+    }
+    .container {
+      display: flex;
+    }
+    .sidebar {
+      width: 72px;
+      background: #ffffff;
+      border-right: 1px solid #e0e0e0;
+      height: 100vh;
+      transition: width 0.3s ease;
+      overflow: visible;
+      position: fixed;
+      z-index: 3;
+      top: 0;
+      left: 0;
+      box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+    }
+    .sidebar.expand { width: 280px; }
+    .search-box {
+      display: none;
+      padding: 16px;
+    }
+    .sidebar.expand .search-box {
+      display: block;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f1f3f4;
+    }
+    .menu {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .menu-item {
+      position: relative;
+    }
+    .menu > .menu-item > a {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      color: #1f2937;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background-color 0.2s ease;
+      border-radius: 8px;
+      margin: 4px 8px;
+    }
+    .menu > .menu-item > a:hover {
+      background-color: #e3f2fd;
+    }
+    .menu i.material-icons {
+      display: inline-flex;
+      justify-content: center;
+      width: 36px;
+      font-size: 20px;
+      color: #1f2937;
+    }
+    .menu .label {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .sidebar.expand .menu .label {
+      opacity: 1;
+      margin-left: 12px;
+    }
+    .submenu-sidebar {
+      width: 300px;
+      background: #ffffff;
+      border-left: 1px solid #e0e0e0;
+      overflow-y: auto;
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      left: 280px;
+      top: 0;
+      height: 100vh;
+      z-index: 2;
+      box-shadow: 0 0 8px rgba(0,0,0,0.08);
+    }
+    .submenu-sidebar.open {
+      display: flex;
+    }
+    .submenu-sidebar h2 {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 20px 24px 12px;
+      color: #1f2937;
+    }
+    .submenu-sidebar .submenu {
+      padding: 0 24px 24px;
+    }
+    .submenu-sidebar .submenu a {
+      display: block;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: #1f2937;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      background: #f9fafb;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      transition: background 0.2s ease;
+    }
+    .submenu-sidebar .submenu a:hover {
+      background: #e3f2fd;
+    }
+    .submenu-title {
+      font-weight: 500;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+    .submenu-code {
+      font-size: 12px;
+      color: #607d8b;
+    }
+    main {
+      padding: 24px;
+      margin-left: 72px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="menu-container">
+    <aside class="sidebar" id="main-sidebar">
+      <div class="search-box">
+        <div style="position: relative;">
+          <input type="text" placeholder="Buscar no menu..." id="menu-search">
+          <i class="material-icons" id="clear-search" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none; color: #666;">close</i>
+        </div>
+      </div>
+      <ul class="menu" id="menu-list"></ul>
+    </aside>
+    <aside class="submenu-sidebar" id="submenu">
+      <h2 id="submenu-title">Título</h2>
+      <div class="submenu" id="submenu-content"></div>
+    </aside>
+  </div>
+  <main>
+    <h1>Bem-vindo</h1>
+    <p>Selecione um item no menu lateral.</p>
+  </main>
+  <script>
+    const menuData = [
+      { t: 'TRANSPARÊNCIA', v: 'transparencia', icon: 'visibility' },
+      { t: 'Organização Administrativa', v: 'organizacao', icon: 'account_tree', c: [
+        ['Estrutura Organizacional', '2.1 a 2.5'],
+        ['Recursos Humanos', '6.1 a 6.6'],
+        ['Convênios e Transferências', '5.1 a 5.3']
+      ]},
+      { t: 'Normas e Leis', v: 'leis', icon: 'gavel', c: [
+        ['Legislações e Atos', '2.6'],
+        ['LAI', 'Lei 12.527/2011'],
+        ['LRF', 'LC 101/2000'],
+        ['LGPD e Governo Digital', '15.1 a 15.6']
+      ]},
+      { t: 'Contabilidade Pública', v: 'contabilidade', icon: 'attach_money', c: [
+        ['Receitas', '3.1 a 3.3'],
+        ['Despesas', '4.1 a 4.2'],
+        ['Renúncias de Receitas', '16.1 a 16.4'],
+        ['Dívida Ativa', '3.3']
+      ]},
+      { t: 'Gestão de Recursos', v: 'recursos', icon: 'bar_chart', c: [
+        ['Planejamento e Contas', '11.1 a 11.10'],
+        ['Emendas Parlamentares', '17.1 a 17.2']
+      ]},
+      { t: 'Contratos e Licitações', v: 'contratos', icon: 'description', c: [
+        ['Licitações e Contratos', '8.1 a 9.4'],
+        ['Ordem Cronológica', '9.4']
+      ]},
+      { t: 'Despesas com Pessoal', v: 'pessoal', icon: 'group', c: [
+        ['Diárias e Passagens', '7.1 a 7.2'],
+        ['Valores das Diárias', '7.2']
+      ]},
+      { t: 'Cidadania e Acesso', v: 'cidadania', icon: 'support_agent', c: [
+        ['SIC', '12.1 a 12.9'],
+        ['Ouvidorias', '14.1 a 14.3'],
+        ['Perguntas Frequentes', '2.7'],
+        ['Carta de Serviços ao Cidadão', '']
+      ]},
+      { t: 'Publicações Oficiais', v: 'publicacoes', icon: 'library_books', c: [
+        ['Diário Oficial', 'Lei 4.965/1966'],
+        ['Transparência COVID-19', 'PRSE/MPF 12/2022']
+      ]},
+      { t: 'Indicadores e Avaliação', v: 'avaliacao', icon: 'emoji_events', c: [
+        ['Radar da Transparência Pública', '2.9'],
+        ['Dados Abertos', 'CGU']
+      ]},
+      { t: 'Serviços Essenciais', v: 'servicos', icon: 'apartment', c: [
+        ['Obras', '10.1 a 10.4'],
+        ['Saúde', '18.1 a 18.3'],
+        ['Educação', '19.1 a 19.2']
+      ]},
+    ];
+
+    const submenus = {};
+    function renderMenu() {
+      const $list = $('#menu-list');
+      $list.empty();
+      menuData.forEach(item => {
+        if (item.c) {
+          submenus[item.v] = { title: item.t, items: item.c };
+        } else {
+          submenus[item.v] = { title: item.t, items: [] };
+        }
+        $list.append(`
+          <li class="menu-item" data-submenu="${item.v}">
+            <a href="#">
+              <i class="material-icons">${item.icon}</i>
+              <span class="label">${item.t}</span>
+            </a>
+          </li>
+        `);
+      });
+    }
+
+    function renderSubmenu(key) {
+      if (key && submenus[key] && submenus[key].items.length > 0) {
+        $('#submenu-title').text(submenus[key].title);
+        $('#submenu-content').html(
+          submenus[key].items.map(([title, code]) => `
+            <a href='#'>
+              <div class='submenu-title'>${title}</div>
+              <div class='submenu-code'>Item ${code}</div>
+            </a>`).join('')
+        );
+        $('#submenu').addClass('open');
+        $('#main-sidebar').addClass('expand');
+      } else {
+        $('#submenu').removeClass('open');
+        $('#submenu-title').text('');
+        $('#submenu-content').empty();
+        $('#main-sidebar').addClass('expand');
+      }
+    }
+
+    $(document).ready(function () {
+      renderMenu();
+
+      $('.menu').on('mouseenter', '.menu-item', function () {
+        const key = $(this).data('submenu');
+        renderSubmenu(key);
+      });
+
+      $('#menu-container').on('mouseleave', function () {
+        $('#submenu').removeClass('open');
+        $('#main-sidebar').removeClass('expand');
+      });
+
+      $('#menu-search').on('input', function () {
+        const search = $(this).val().toLowerCase();
+        $('#clear-search').toggle(!!search);
+        $('.menu-item').each(function () {
+          const key = $(this).data('submenu');
+          const mainTitle = $(this).text().toLowerCase();
+          const subItems = submenus[key]?.items?.map(([title]) => title.toLowerCase()) || [];
+          const match = mainTitle.includes(search) || subItems.some(sub => sub.includes(search));
+          $(this).toggle(match);
+        });
+      });
+
+      $('#clear-search').on('click', function () {
+        $('#menu-search').val('').trigger('input').focus();
+      });
+    });
+  </script>
+</body>
+</html>

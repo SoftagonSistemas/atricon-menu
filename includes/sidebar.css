@@ -1,0 +1,177 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8fafc;
+}
+.container {
+  display: flex;
+}
+.sidebar {
+  width: 72px;
+  background: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  height: 100vh;
+  transition: width 0.3s ease;
+  overflow: visible;
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+}
+.sidebar.expand { width: 280px; }
+.search-box {
+  display: none;
+  padding: 16px;
+}
+.sidebar.expand .search-box {
+  display: block;
+}
+.search-box input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f1f3f4;
+}
+.menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.menu-item {
+  position: relative;
+}
+.menu > .menu-item > a {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  color: #1f2937;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+  margin: 4px 8px;
+}
+.menu > .menu-item > a:hover {
+  background-color: #e3f2fd;
+}
+.menu i.material-icons {
+  display: inline-flex;
+  justify-content: center;
+  width: 36px;
+  font-size: 20px;
+  color: #1f2937;
+}
+.menu .label {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.sidebar.expand .menu .label {
+  opacity: 1;
+  margin-left: 12px;
+}
+.submenu-sidebar {
+  width: 300px;
+  background: #ffffff;
+  border-left: 1px solid #e0e0e0;
+  overflow-y: auto;
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  left: 280px;
+  top: 0;
+  height: 100vh;
+  z-index: 2;
+  box-shadow: 0 0 8px rgba(0,0,0,0.08);
+}
+.submenu-sidebar.open {
+  display: flex;
+}
+.submenu-sidebar h2 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 20px 24px 12px;
+  color: #1f2937;
+}
+.submenu-sidebar .submenu {
+  padding: 0 24px 24px;
+}
+.submenu-sidebar .submenu a {
+  display: block;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #1f2937;
+  text-decoration: none;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  background: #f9fafb;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: background 0.2s ease;
+}
+.submenu-sidebar .submenu a:hover {
+  background: #e3f2fd;
+}
+.submenu-title {
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+.submenu-code {
+  font-size: 12px;
+  color: #607d8b;
+}
+main {
+  padding: 24px;
+  margin-left: 72px;
+}
+
+/* === Rodapé/Brand ATRICON === */
+.sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 0;
+    background: #fff;
+    border-top: 1px solid #e0e0e0;
+    transition: width 0.3s, padding 0.3s;
+    z-index: 10;
+}
+.sidebar-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    margin-right: 0;
+    transition: margin 0.3s;
+}
+.sidebar-brand-text {
+    display: none;
+    opacity: 0;
+    margin-left: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2271b1;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    transition: opacity 0.3s, margin 0.3s;
+}
+.sidebar.expand .sidebar-footer {
+    justify-content: flex-start;
+    padding-left: 24px;
+}
+.sidebar.expand .sidebar-logo {
+    margin-right: 12px;
+}
+.sidebar.expand .sidebar-brand-text {
+    display: inline-block;
+    opacity: 1;
+    margin-left: 8px;
+}
+.sidebar:not(.expand) .sidebar-logo {
+    margin: 0 auto;
+}
