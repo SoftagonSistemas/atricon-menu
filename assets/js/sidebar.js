@@ -1,42 +1,39 @@
 jQuery(function($){
-  // Extrai do DOM WP a estrutura de submenus
-  const submenus = {};
-  $('#menu-list > li.menu-item').each(function(){
-    const key = $(this).attr('id') || $(this).data('menu-item-id');
-    const title = $(this).children('a').text().trim();
-    const items = [];
-    $(this).find('> ul.sub-menu > li.menu-item').each(function(){
-      const $a = $(this).children('a');
-      items.push({ title: $a.text().trim(), href: $a.attr('href') });
-    });
-    submenus[key] = { title, items };
-  });
-
-  function openSubmenu(key){
-    const data = submenus[key];
-    if (!data) return;
-    $('#submenu-title').text(data.title);
+  // Função para abrir o submenu do item de menu
+  function openSubmenu($menuItem) {
+    const $submenu = $menuItem.children('ul.sub-menu');
+    const title = $menuItem.children('a').find('.label').text().trim() || $menuItem.children('a').text().trim();
+    $('#submenu-title').text(title);
     $('#submenu-content').empty();
-    data.items.forEach(i => {
-      $('#submenu-content').append(`
-        <a href="${i.href}">
-          <div class="submenu-title">${i.title}</div>
-          <div class="submenu-code"></div>
-        </a>
-      `);
-    });
-    $('#main-sidebar').addClass('expand');
-    $('#submenu').addClass('open');
+    if ($submenu.length > 0) {
+      $submenu.children('li.menu-item').each(function(){
+        const $a = $(this).children('a');
+        const icon = $a.find('i.material-icons').text().trim();
+        const label = $a.find('.label').text().trim() || $a.text().trim();
+        const href = $a.attr('href');
+        $('#submenu-content').append(`
+          <a href="${href}">
+            <i class="material-icons menu-icon" aria-hidden="true">${icon}</i> <span class="label">${label}</span>
+          </a>
+        `);
+      });
+      $('#main-sidebar').addClass('expand');
+      $('#submenu').addClass('open');
+    } else {
+      closeSubmenu();
+    }
   }
 
   function closeSubmenu(){
     $('#main-sidebar').removeClass('expand');
     $('#submenu').removeClass('open');
+    $('#submenu-title').text('');
+    $('#submenu-content').empty();
   }
 
-  // Hover e saída
+  // Hover: abre submenu se existir
   $('#menu-list').on('mouseenter', 'li.menu-item', function(){
-    openSubmenu(this.id || $(this).data('menu-item-id'));
+    openSubmenu($(this));
   });
   $('#menu-container').on('mouseleave', closeSubmenu);
 

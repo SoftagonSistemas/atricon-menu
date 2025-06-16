@@ -10,34 +10,34 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-atricon-menu.php';
+
 /**
  * Walker customizado para injetar ícones antes do texto.
  */
 class ATRICON_Icon_Walker extends Walker_Nav_Menu {
     public function start_el( &$output, $item, $depth = 0, $args = [], $id = 0 ) {
-        // Obtém nome do ícone do atributo title e ajusta hífens para underscore
         $icon_html = '';
         if ( ! empty( $item->attr_title ) ) {
             $icon_name = str_replace( '-', '_', sanitize_text_field( $item->attr_title ) );
             $icon_html = '<i class="material-icons menu-icon" aria-hidden="true">' . esc_html( $icon_name ) . '</i>';
         }
         $title = apply_filters( 'nav_menu_item_title', $item->title, $item, $args );
-
         $output .= '<li id="menu-item-' . $item->ID . '" class="menu-item menu-item-' . $item->ID . '">';
         $output .= '<a href="' . esc_url( $item->url ) . '" class="menu-link">';
-        // Espaço separado para garantir não colidir
         $output .= $icon_html . ' <span class="label">' . esc_html( $title ) . '</span>';
         $output .= '</a>';
     }
-
     public function end_el( &$output, $item, $depth = 0, $args = [] ) {
         $output .= "</li>\n";
     }
 }
 
 class ATRICON_Sidebar_Menu {
+    private $menu;
 
     public function __construct() {
+        $this->menu = new ATRICON_Menu();
         add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
         add_action( 'wp_body_open',       [ $this, 'print_sidebar' ] );
@@ -64,7 +64,10 @@ class ATRICON_Sidebar_Menu {
     }
 
     private function get_sidebar_markup() {
+        // Exporta a estrutura do menu para o JS
+        $menu_data = json_encode($this->menu->get_menu_items());
         ob_start(); ?>
+        <script>window.ATRICON_MENU_DATA = <?php echo $menu_data; ?>;</script>
         <div id="menu-container" class="container">
           <aside id="main-sidebar" class="sidebar">
             <div class="search-box">
@@ -75,13 +78,13 @@ class ATRICON_Sidebar_Menu {
             </div>
             <?php
             wp_nav_menu([
-                'menu'       => 29,
-                'container'  => false,
-                'menu_class' => 'menu',
-                'items_wrap' => '<ul id="menu-list" class="menu">%3$s</ul>',
-                'depth'      => 2,
-                'walker'     => new ATRICON_Icon_Walker(),
-                'fallback_cb'=> false,
+                'theme_location' => 'atrcn-sidebar',
+                'container'      => false,
+                'menu_class'     => 'menu',
+                'items_wrap'     => '<ul id="menu-list" class="menu">%3$s</ul>',
+                'depth'          => 2, // Permite submenus
+                'walker'         => new ATRICON_Icon_Walker(),
+                'fallback_cb'    => false,
             ]);
             ?>
           </aside>
@@ -95,4 +98,26 @@ class ATRICON_Sidebar_Menu {
     }
 }
 
-new ATRICON_Sidebar_Menu();
+// Inicializa o plugin
+function atricon_sidebar_menu_init() {
+    new ATRICON_Sidebar_Menu();
+}
+add_action( 'plugins_loaded', 'atricon_sidebar_menu_init' );
+
+// Ativação do plugin
+register_activation_hook( __FILE__, 'atricon_sidebar_menu_activate' );
+function atricon_sidebar_menu_activate() {
+    $menu = new ATRICON_Menu();
+    $map = $menu->create_menu_pages_and_get_map();
+    $menu->create_menu_with_pages($map);
+}
+
+// Desativação do plugin
+register_deactivation_hook( __FILE__, 'atricon_sidebar_menu_deactivate' );
+function atricon_sidebar_menu_deactivate() {
+    // Remove o menu ATRICON
+    $existing_menu = wp_get_nav_menu_object('ATRICON');
+    if ($existing_menu) {
+        wp_delete_nav_menu($existing_menu->term_id);
+    }
+}

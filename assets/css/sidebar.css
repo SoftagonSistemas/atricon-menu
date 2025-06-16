@@ -93,18 +93,31 @@
   padding: 0 24px 24px;
 }
 #submenu .submenu a {
-  display: block;
-  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
   font-size: 14px;
   color: #1f2937;
   text-decoration: none;
   border-radius: 6px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   background: #f9fafb;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   transition: background 0.2s ease;
+  gap: 8px;
 }
 #submenu .submenu a:hover { background: #e3f2fd; }
+#submenu .submenu .menu-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  color: #1f2937;
+  flex-shrink: 0;
+}
+#submenu .submenu .label {
+  margin-left: 0;
+  opacity: 1;
+  color: inherit;
+}
 .submenu-title { font-weight: 500; font-size: 15px; margin-bottom: 4px; }
 .submenu-code { font-size: 12px; color: #607d8b; }
 
@@ -116,3 +129,30 @@ main {
 
 /* Responsive search clear icon */
 #menu-search:not(:placeholder-shown) + #clear-search { display: block; }
+
+.menu .sub-menu {
+  list-style: none;
+  padding-left: 1.5em;
+  margin: 0;
+}
+.menu .sub-menu .menu-link {
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  padding: 0.3em 0;
+  background: none;
+  border-radius: 0;
+  margin: 0;
+}
+.menu .sub-menu .menu-link:hover {
+  background: #e3f2fd;
+}
+.menu .sub-menu .menu-icon {
+  margin-right: 0.5em;
+  font-size: 1.1em;
+  color: #1f2937;
+}
+.menu .sub-menu .label {
+  color: inherit;
+}
