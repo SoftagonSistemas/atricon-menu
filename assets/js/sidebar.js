@@ -30,18 +30,17 @@ jQuery(function($){
     $('#submenu-title').text('');
     $('#submenu-content').empty();
   }
-
-  // Hover: abre submenu se existir
-  $('#menu-list').on('mouseenter', 'li.menu-item', function(){
+  // Hover: abre submenu se existir (apenas para itens de nível superior)
+  $('#menu-list').on('mouseenter', '> li.menu-item-top', function(){
     openSubmenu($(this));
   });
   $('#menu-container').on('mouseleave', closeSubmenu);
 
-  // Busca
+  // Busca (apenas nos itens de nível superior)
   $('#menu-search').on('input', function(){
     const term = $(this).val().toLowerCase();
     $('#clear-search').toggle(!!term);
-    $('#menu-list li.menu-item').each(function(){
+    $('#menu-list > li.menu-item-top').each(function(){
       const txt = $(this).children('a').text().toLowerCase();
       $(this).toggle(txt.includes(term));
     });

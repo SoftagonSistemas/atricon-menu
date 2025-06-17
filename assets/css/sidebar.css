@@ -36,7 +36,9 @@
 /* Menu list */
 .menu { list-style: none; margin: 0; padding: 0; }
 .menu-item { position: relative; }
-.menu > .menu-item > a {
+
+/* Only show top-level menu items in the main sidebar */
+.menu > .menu-item-top > a {
   display: flex;
   align-items: center;
   padding: 14px 16px;
@@ -47,7 +49,12 @@
   border-radius: 8px;
   margin: 4px 8px;
 }
-.menu > .menu-item > a:hover { background-color: #e3f2fd; }
+.menu > .menu-item-top > a:hover { background-color: #e3f2fd; }
+
+/* Hide all menu items that are not top-level */
+.menu .menu-item:not(.menu-item-top) {
+  display: none !important;
+}
 
 /* Icon styling */
 .menu i.material-icons {
@@ -130,10 +137,25 @@ main {
 /* Responsive search clear icon */
 #menu-search:not(:placeholder-shown) + #clear-search { display: block; }
 
+/* Hide submenu items that appear as top-level items */
+#menu-list > .menu-item-sub {
+  display: none !important;
+}
+
+/* Hide all menu items that are not top-level */
+.menu .menu-item:not(.menu-item-top) {
+  display: none !important;
+}
+
+/* Show sub-menu items only within their parent */
 .menu .sub-menu {
   list-style: none;
   padding-left: 1.5em;
   margin: 0;
+  display: none; /* Hidden by default, shown via JavaScript */
+}
+.menu .sub-menu .menu-item {
+  display: block !important; /* Override the hide rule for submenu items */
 }
 .menu .sub-menu .menu-link {
   color: #1f2937;
@@ -156,3 +178,4 @@ main {
 .menu .sub-menu .label {
   color: inherit;
 }
+

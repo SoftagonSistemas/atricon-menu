@@ -16,18 +16,52 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-atricon-menu.php';
  * Walker customizado para injetar ícones antes do texto.
  */
 class ATRICON_Icon_Walker extends Walker_Nav_Menu {
+    
+    public function start_lvl( &$output, $depth = 0, $args = [] ) {
+        $indent = str_repeat( "\t", $depth );
+        $output .= "\n$indent<ul class=\"sub-menu\">\n";
+    }
+    
+    public function end_lvl( &$output, $depth = 0, $args = [] ) {
+        $indent = str_repeat( "\t", $depth );
+        $output .= "$indent</ul>\n";
+    }
+    
     public function start_el( &$output, $item, $depth = 0, $args = [], $id = 0 ) {
+        $indent = str_repeat( "\t", $depth );
+        
         $icon_html = '';
         if ( ! empty( $item->attr_title ) ) {
             $icon_name = str_replace( '-', '_', sanitize_text_field( $item->attr_title ) );
             $icon_html = '<i class="material-icons menu-icon" aria-hidden="true">' . esc_html( $icon_name ) . '</i>';
         }
+        
         $title = apply_filters( 'nav_menu_item_title', $item->title, $item, $args );
-        $output .= '<li id="menu-item-' . $item->ID . '" class="menu-item menu-item-' . $item->ID . '">';
-        $output .= '<a href="' . esc_url( $item->url ) . '" class="menu-link">';
-        $output .= $icon_html . ' <span class="label">' . esc_html( $title ) . '</span>';
-        $output .= '</a>';
+        
+        $classes = ['menu-item', 'menu-item-' . $item->ID];
+        if ( $depth === 0 ) {
+            $classes[] = 'menu-item-top';
+        } else {
+            $classes[] = 'menu-item-sub';
+        }
+        
+        $class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args ) );
+        $class_names = $class_names ? ' class="' . esc_attr( $class_names ) . '"' : '';
+        
+        $id = apply_filters( 'nav_menu_item_id', 'menu-item-'. $item->ID, $item, $args );
+        $id = $id ? ' id="' . esc_attr( $id ) . '"' : '';
+        
+        $output .= $indent . '<li' . $id . $class_names .'>';
+        
+        $item_output = $args->before ?? '';
+        $item_output .= '<a href="' . esc_url( $item->url ) . '" class="menu-link">';
+        $item_output .= ( $args->link_before ?? '' ) . $icon_html . ' <span class="label">' . esc_html( $title ) . '</span>' . ( $args->link_after ?? '' );
+        $item_output .= '</a>';
+        $item_output .= $args->after ?? '';
+        
+        $output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
     }
+    
     public function end_el( &$output, $item, $depth = 0, $args = [] ) {
         $output .= "</li>\n";
     }
