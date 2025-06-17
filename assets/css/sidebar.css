@@ -179,3 +179,13 @@ main {
   color: inherit;
 }
 
+/* Prevent hover issues on menu items without submenus */
+.menu-item-top:not(.menu-item-has-children) .menu-link {
+  cursor: pointer;
+}
+
+/* Ensure submenu container doesn't interfere with hover events */
+#submenu {
+  pointer-events: auto;
+}
+
