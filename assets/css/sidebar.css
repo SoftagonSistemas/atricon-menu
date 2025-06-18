@@ -62,6 +62,8 @@
   margin-right: 8px;
   font-size: 20px;
   color: #1f2937;
+  display: inline-block !important; /* Força exibição dos ícones */
+  visibility: visible !important;
 }
 
 /* Label text hidden initially, shown on expand */
@@ -314,5 +316,23 @@ main {
   0% { background-color: transparent; }
   50% { background-color: rgba(0, 106, 107, 0.1); }
   100% { background-color: transparent; }
+}
+
+.menu-item-top.hidden {
+  display: none !important;
+}
+
+/* Força a exibição correta dos elementos quando o item volta a ser visível */
+.menu-item-top:not(.hidden) > a {
+  display: flex !important;
+}
+
+.menu-item-top:not(.hidden) > a > i.material-icons {
+  display: inline-block !important;
+  visibility: visible !important;
+}
+
+.menu-item-top:not(.hidden) > a > .label {
+  display: inline !important;
 }
 

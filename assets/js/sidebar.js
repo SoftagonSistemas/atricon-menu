@@ -25,8 +25,7 @@ function debounce(func, wait) {
   };
 }
 
-jQuery(function($){
-  // Função para criar índice de busca otimizado
+jQuery(function($){  // Função para criar índice de busca otimizado
   function createSearchIndex() {
     if (searchIndex) return searchIndex;
     
@@ -34,6 +33,11 @@ jQuery(function($){
       items: [],
       terms: new Map()
     };
+    
+    // Garante que todos os itens estejam visíveis antes de indexar
+    $('#menu-list > li.menu-item-top').each(function(){
+      $(this).removeClass('hidden').show();
+    });
     
     $('#menu-list > li.menu-item-top').each(function(index) {
       const $menuItem = $(this);
@@ -149,10 +153,12 @@ jQuery(function($){
   function openSubmenu($menuItem) {
     const $submenu = $menuItem.children('ul.sub-menu');
     const title = $menuItem.children('a').find('.label').text().trim() || $menuItem.children('a').text().trim();
-    
-    // Só abre a sidebar se houver subitens
-    if ($submenu.length > 0) {
+
+    // Só expande a sidebar e mostra o título se houver subitens válidos
+    if ($submenu.length > 0 && $submenu.children('li.menu-item').length > 0) {
       $('#submenu-title').text(title);
+      $('#main-sidebar').addClass('expand');
+      $('#submenu').addClass('open');
       $('#submenu-content').empty();
       $submenu.children('li.menu-item').each(function(){
         const $a = $(this).children('a');
@@ -165,8 +171,12 @@ jQuery(function($){
           </a>
         `);
       });
-      $('#main-sidebar').addClass('expand');
-      $('#submenu').addClass('open');
+    } else {
+      // Se não há subitens, limpa o conteúdo e não expande o sidebar
+      $('#submenu-title').text('');
+      $('#submenu-content').empty();
+      $('#main-sidebar').removeClass('expand');
+      $('#submenu').removeClass('open');
     }
   }
 
@@ -177,96 +187,118 @@ jQuery(function($){
     $('#submenu-content').empty();
   }
   
-  // Hover: abre submenu se existir (apenas para itens de nível superior)
+  function showDefaultSubmenuMessage(title) {
+    $('#submenu-title').text(title);
+    $('#main-sidebar').addClass('expand');
+    $('#submenu').addClass('open');
+    $('#submenu-content').html('<div class="submenu-default-message">Clique em <b>' + title + '</b> para acessar o conteúdo.</div>');
+  }
+
+  let submenuShouldClose = null;
+
   $('#menu-list').on('mouseenter', '> li.menu-item-top', function(){
-    const $menuItem = $(this);
+    $('#menu-list > li.menu-item-top').removeClass('menu-item-hover');
+    const $menuItem = $(this).addClass('menu-item-hover');
     const $submenu = $menuItem.children('ul.sub-menu');
-    
-    // Só chama openSubmenu se o item realmente tiver subitens
-    if ($submenu.length > 0) {
+    const title = $menuItem.children('a').find('.label').text().trim() || $menuItem.children('a').text().trim();
+    if ($submenu.length > 0 && $submenu.children('li.menu-item').length > 0) {
+      if (submenuShouldClose) {
+        clearTimeout(submenuShouldClose);
+        submenuShouldClose = null;
+      }
       openSubmenu($menuItem);
+    } else {
+      if (submenuShouldClose) {
+        clearTimeout(submenuShouldClose);
+        submenuShouldClose = null;
+      }
+      showDefaultSubmenuMessage(title);
     }
   });
   
-  // Fecha submenu quando sair do container inteiro
+  $('#menu-list').on('mouseleave', '> li.menu-item-top', function(){
+    $(this).removeClass('menu-item-hover');
+  });
+  
   $('#menu-container').on('mouseleave', function(e) {
-    // Verifica se realmente saiu do container (não apenas mudou entre elementos filhos)
     if (!$(e.relatedTarget).closest('#menu-container').length) {
       closeSubmenu();
+      $('#menu-list > li.menu-item-top').removeClass('menu-item-hover');
     }
   });
-
-  // Busca otimizada com debounce
+  // Busca otimizada com debounce (reescrita)
   const debouncedSearch = debounce(function(term) {
     const normalizedTerm = normalizeText(term);
     $('#clear-search').toggle(!!term);
-    
+    $('.search-highlight').removeClass('search-highlight');
+    closeSubmenu();
+
     if (!term) {
-      // Se não há termo de busca, mostra todos os itens principais
-      $('#menu-list > li.menu-item-top').show();
-      closeSubmenu();
-      // Remove todos os destaques
-      $('.search-highlight').removeClass('search-highlight');
-      // Esconde contador de resultados
+      $('#menu-list > li.menu-item-top').removeClass('hidden');
       $('#search-results-count').hide();
       return;
     }
-    
-    const searchResult = performSearch(term);
-    
+
     // Esconde todos os itens primeiro
-    $('#menu-list > li.menu-item-top').hide();
-    
-    // Mostra apenas os itens com resultados
-    searchResult.results.forEach(index => {
-      searchIndex.items[index].element.show();
+    $('#menu-list > li.menu-item-top').addClass('hidden');
+
+    // Busca e mostra apenas os itens que correspondem
+    let totalMatches = 0;
+    let bestMatchIndex = null;
+    let bestMatchCount = 0;
+
+    searchIndex.items.forEach((item, index) => {
+      let matches = 0;
+      if (item.normalizedMainText.includes(normalizedTerm)) matches++;
+      item.subItems.forEach(subItem => {
+        if (subItem.normalizedText.includes(normalizedTerm)) matches++;
+      });
+      if (matches > 0) {
+        $('#menu-list > li.menu-item-top').eq(index).removeClass('hidden');
+        totalMatches += matches;
+        if (matches > bestMatchCount) {
+          bestMatchCount = matches;
+          bestMatchIndex = index;
+        }
+      }
     });
-    
-    // Se encontrou um termo em um subitem, abre automaticamente o submenu correspondente
-    if (searchResult.bestMatch !== null && term.length >= 2) {
-      const bestItem = searchIndex.items[searchResult.bestMatch];
-      openSubmenu(bestItem.element);
-      
-      // Destaca os subitens que correspondem à busca
+
+    // Se encontrou subitem, abre submenu e destaca
+    if (bestMatchIndex !== null) {
+      openSubmenu(searchIndex.items[bestMatchIndex].element);
       setTimeout(function() {
         $('#submenu-content a').each(function() {
           const $link = $(this);
-          const linkText = $link.text().toLowerCase();
-          const normalizedLinkText = normalizeText(linkText);
-          
+          const normalizedLinkText = normalizeText($link.text());
           if (normalizedLinkText.includes(normalizedTerm)) {
             $link.addClass('search-highlight');
-          } else {
-            $link.removeClass('search-highlight');
           }
         });
-      }, 150);
-    } else if (searchResult.results.length === 0) {
-      closeSubmenu();
+      }, 100);
     }
-    
+
     // Mostra contador de resultados
-    if (searchResult.totalMatches > 0) {
-      const resultText = searchResult.totalMatches === 1 ? '1 resultado encontrado' : `${searchResult.totalMatches} resultados encontrados`;
+    if (totalMatches > 0) {
+      const resultText = totalMatches === 1 ? '1 resultado encontrado' : `${totalMatches} resultados encontrados`;
       $('#search-results-count').text(resultText).show();
     } else {
       $('#search-results-count').text('Nenhum resultado encontrado').show();
     }
-  }, 150); // Debounce de 150ms
+  }, 150);
 
+  // Evento de input
   $('#menu-search').on('input', function(){
     const term = $(this).val().trim();
     debouncedSearch(term);
   });
 
+  // Botão limpar busca
   $('#clear-search').on('click', function(){
     $('#menu-search').val('').trigger('input').focus();
-    // Remove todos os destaques
+    $('#menu-list > li.menu-item-top').removeClass('hidden');
+    $('#search-results-count').hide();
+    closeSubmenu();
     $('.search-highlight').removeClass('search-highlight');
-    // Esconde contador de resultados se existir
-    if ($('#search-results-count').length) {
-      $('#search-results-count').hide();
-    }
   });
   
   // Função utilitária para destacar texto
@@ -275,9 +307,15 @@ jQuery(function($){
     const regex = new RegExp(`(${term})`, 'gi');
     return text.replace(regex, '<mark class="search-term">$1</mark>');
   }
-  
-  // Inicializa o índice de busca quando o DOM estiver pronto
+    // Inicializa o índice de busca quando o DOM estiver pronto
   $(document).ready(function() {
-    createSearchIndex();
+    // Força a exibição de todos os itens do menu inicialmente
+    $('#menu-list > li.menu-item-top').each(function(){
+      $(this).removeClass('hidden').show().removeAttr('style');
+    });
+    // Cria o índice após garantir visibilidade
+    setTimeout(function() {
+      createSearchIndex();
+    }, 100);
   });
 });
