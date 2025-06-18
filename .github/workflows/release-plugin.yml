@@ -21,19 +21,21 @@ jobs:
       - name: Extract version from plugin file
         id: get_version
         run: |
-          VERSION=$(grep -E "^\s*\*\s*Version:\s*" ${{ env.PLUGIN_FILE }} | awk '{ print $NF }')
+          VERSION=$(grep -E "^\s*\*\s*Version:\s*" "$PLUGIN_FILE" | awk '{ print $NF }')
           echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
           echo "Plugin version: $VERSION"
 
       - name: Set ZIP name
+        id: set_zip_name
         run: |
-          ZIP_NAME="${{ env.PLUGIN_FILE%.php }}.zip"
+          ZIP_NAME="${PLUGIN_FILE%.php}.zip"
           echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
 
       - name: Check if tag already exists
         id: tag_check
         run: |
-          if git fetch --tags && git tag | grep -q "^v${{ env.PLUGIN_VERSION }}$"; then
+          git fetch --tags
+          if git tag | grep -q "^v$PLUGIN_VERSION$"; then
             echo "Tag already exists."
             echo "EXISTS=true" >> $GITHUB_ENV
           else
@@ -42,15 +44,15 @@ jobs:
 
       - name: Create zip file
         run: |
-          zip -r ${{ env.ZIP_NAME }} . -x '*.git*' '*.github*' '*node_modules*' '*.zip'
+          zip -r "$ZIP_NAME" . -x '*.git*' '*.github*' '*node_modules*' '*.zip'
 
       - name: Create Git tag
         if: env.EXISTS == 'false'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v${{ env.PLUGIN_VERSION }}" -m "Release v${{ env.PLUGIN_VERSION }}"
-          git push origin "v${{ env.PLUGIN_VERSION }}"
+          git tag -a "v$PLUGIN_VERSION" -m "Release v$PLUGIN_VERSION"
+          git push origin "v$PLUGIN_VERSION"
 
       - name: Create GitHub Release
         if: env.EXISTS == 'false'
