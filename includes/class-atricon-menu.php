@@ -11,11 +11,20 @@ if (!defined('ABSPATH')) {
 
 class ATRICON_Menu {
     /**
+     * Cache para itens do menu
+     */
+    private $menu_cache = null;
+    private $menu_cache_time = 0;
+    private $cache_duration = 300; // 5 minutos
+
+    /**
      * Constructor
      */
     public function __construct() {
         add_action('init', [$this, 'register_menu']);
         add_action('admin_menu', [$this, 'add_admin_menu']);
+        add_action('wp_update_nav_menu', [$this, 'clear_menu_cache']);
+        add_action('wp_delete_nav_menu', [$this, 'clear_menu_cache']);
     }
 
     /**
@@ -26,12 +35,35 @@ class ATRICON_Menu {
     }
 
     /**
-     * Get menu items structure
+     * Limpa o cache do menu quando há alterações
+     */
+    public function clear_menu_cache() {
+        $this->menu_cache = null;
+        $this->menu_cache_time = 0;
+        delete_transient('atricon_menu_cache');
+    }
+
+    /**
+     * Get menu items structure with caching
      *
      * @return array Menu items array
      */
     public function get_menu_items() {
-        return [
+        // Verifica cache primeiro
+        if ($this->menu_cache && (time() - $this->menu_cache_time) < $this->cache_duration) {
+            return $this->menu_cache;
+        }
+
+        // Tenta buscar do cache transiente
+        $cached = get_transient('atricon_menu_cache');
+        if ($cached !== false) {
+            $this->menu_cache = $cached;
+            $this->menu_cache_time = time();
+            return $cached;
+        }
+
+        // Estrutura base do menu
+        $menu_structure = [
             ['t'=>'BUSCA_PLACEHOLDER','v'=>'busca-servico','icon'=>'search'],
             ['t'=>'TRANSPARÊNCIA','v'=>'transparencia','icon'=>'visibility'],
             ['t'=>'Organização Administrativa','v'=>'organizacao','icon'=>'account_balance','c'=>[
@@ -83,18 +115,31 @@ class ATRICON_Menu {
                 ['t'=>'Educação','v'=>'educacao','code'=>'19.1 a 19.2','icon'=>'school'],
             ]],
         ];
+
+        // Salva no cache
+        $this->menu_cache = $menu_structure;
+        $this->menu_cache_time = time();
+        set_transient('atricon_menu_cache', $menu_structure, $this->cache_duration);
+
+        return $menu_structure;
     }
 
     /**
-     * Get content from CSV file
+     * Get content from CSV file with caching
      *
      * @return array Array of menu items with their content
      */
     private function get_menu_content_from_csv() {
+        // Cache para conteúdo CSV
+        $csv_cache = get_transient('atricon_csv_content');
+        if ($csv_cache !== false) {
+            return $csv_cache;
+        }
+
         $csv_file = plugin_dir_path(dirname(__FILE__)) . 'assets/atricon_menu_conteudo_modelo.csv';
         $content = [];
         
-        if (($handle = fopen($csv_file, "r")) !== FALSE) {
+        if (file_exists($csv_file) && ($handle = fopen($csv_file, "r")) !== FALSE) {
             // Skip header row
             fgetcsv($handle);
             
@@ -116,6 +161,9 @@ class ATRICON_Menu {
             }
             fclose($handle);
         }
+        
+        // Cache por 1 hora
+        set_transient('atricon_csv_content', $content, 3600);
         
         return $content;
     }
@@ -146,12 +194,13 @@ class ATRICON_Menu {
         $slug = sanitize_title($item['v']);
         $path = $parent_slug ? 'atricon/' . sanitize_title($parent_slug) . '/' . $slug : 'atricon/' . $slug;
 
-        // Busca página pelo slug e pai
+        // Busca página pelo slug e pai - otimizada
         $page_args = [
             'name'        => $slug,
             'post_type'   => 'page',
             'post_status' => 'publish',
             'numberposts' => 1,
+            'fields'      => 'ids', // Retorna apenas IDs para melhor performance
         ];
         
         $parent_id = 0;
@@ -165,7 +214,7 @@ class ATRICON_Menu {
         
         $existing_pages = get_posts($page_args);
         if (!empty($existing_pages)) {
-            $page_id = $existing_pages[0]->ID;
+            $page_id = $existing_pages[0];
         } else {
             $content = isset($menu_content[$item['t']]) ? $menu_content[$item['t']]['content'] : '<h2>' . esc_html($item['t']) . '</h2>' . (!empty($item['code']) ? '<p>Código de referência: ' . esc_html($item['code']) . '</p>' : '') . '<p>Esta página foi criada automaticamente pelo plugin ATRICON.</p>';
             
@@ -242,6 +291,9 @@ class ATRICON_Menu {
         $locations = get_theme_mod('nav_menu_locations');
         $locations['atrcn-sidebar'] = $menu_id;
         set_theme_mod('nav_menu_locations', $locations);
+        
+        // Limpa cache após criar menu
+        $this->clear_menu_cache();
     }
 
     /**
@@ -268,6 +320,12 @@ class ATRICON_Menu {
             $this->create_menu_with_pages($map);
             echo '<div class="notice notice-success"><p>Menu recriado com sucesso!</p></div>';
         }
+        
+        if (isset($_POST['atricon_clear_cache']) && check_admin_referer('atricon_clear_cache')) {
+            $this->clear_menu_cache();
+            delete_transient('atricon_csv_content');
+            echo '<div class="notice notice-success"><p>Cache limpo com sucesso!</p></div>';
+        }
         ?>
         <div class="wrap">
             <h1>ATRICON Menu</h1>
@@ -276,6 +334,16 @@ class ATRICON_Menu {
                 <p>Clique no botão abaixo para recriar o menu ATRICON com todas as páginas necessárias.</p>
                 <p class="submit">
                     <input type="submit" name="atricon_recreate_menu" class="button button-primary" value="Recriar Menu">
+                </p>
+            </form>
+            
+            <hr>
+            
+            <form method="post" action="">
+                <?php wp_nonce_field('atricon_clear_cache'); ?>
+                <p>Limpar cache do menu e conteúdo CSV.</p>
+                <p class="submit">
+                    <input type="submit" name="atricon_clear_cache" class="button button-secondary" value="Limpar Cache">
                 </p>
             </form>
         </div>

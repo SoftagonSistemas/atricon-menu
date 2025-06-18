@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ATRICON Sidebar Menu
  * Description: Exibe a sidebar fixa em todas as páginas públicas, com busca, submenus e Material Icons via atributo title.
- * Version:     1.4
+ * Version:     1.6
  * Author:      Hermes Alves
  * Requires at least: 6.8
  * Text Domain: atricon-sidebar-menu
@@ -13,11 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-atricon-menu.php';
 
 /**
- * Walker customizado para injetar ícones antes do texto.
+ * Walker customizado para injetar ícones antes do texto - Otimizado
  */
 class ATRICON_Icon_Walker extends Walker_Nav_Menu {
     
+    private $current_depth = 0;
+    public $has_children = false;
+    
     public function start_lvl( &$output, $depth = 0, $args = [] ) {
+        $this->current_depth = $depth;
         $indent = str_repeat( "\t", $depth );
         $output .= "\n$indent<ul class=\"sub-menu\">\n";
     }
@@ -25,11 +29,13 @@ class ATRICON_Icon_Walker extends Walker_Nav_Menu {
     public function end_lvl( &$output, $depth = 0, $args = [] ) {
         $indent = str_repeat( "\t", $depth );
         $output .= "$indent</ul>\n";
+        $this->current_depth = $depth - 1;
     }
     
     public function start_el( &$output, $item, $depth = 0, $args = [], $id = 0 ) {
         $indent = str_repeat( "\t", $depth );
         
+        // Processa ícone de forma otimizada
         $icon_html = '';
         if ( ! empty( $item->attr_title ) ) {
             $icon_name = str_replace( '-', '_', sanitize_text_field( $item->attr_title ) );
@@ -38,9 +44,15 @@ class ATRICON_Icon_Walker extends Walker_Nav_Menu {
         
         $title = apply_filters( 'nav_menu_item_title', $item->title, $item, $args );
         
+        // Classes otimizadas
         $classes = ['menu-item', 'menu-item-' . $item->ID];
         if ( $depth === 0 ) {
             $classes[] = 'menu-item-top';
+            // Verifica se tem filhos para adicionar classe
+            $this->has_children = ! empty( $item->classes ) && in_array( 'menu-item-has-children', $item->classes );
+            if ( $this->has_children ) {
+                $classes[] = 'menu-item-has-children';
+            }
         } else {
             $classes[] = 'menu-item-sub';
         }
@@ -69,6 +81,7 @@ class ATRICON_Icon_Walker extends Walker_Nav_Menu {
 
 class ATRICON_Sidebar_Menu {
     private $menu;
+    private $menu_cache = null;
 
     public function __construct() {
         $this->menu = new ATRICON_Menu();
@@ -76,6 +89,16 @@ class ATRICON_Sidebar_Menu {
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
         add_action( 'wp_body_open',       [ $this, 'print_sidebar' ] );
         add_action( 'wp_footer',          [ $this, 'print_sidebar_fallback' ] );
+        add_action( 'wp_update_nav_menu', [ $this, 'clear_cache' ] );
+        add_action( 'wp_delete_nav_menu', [ $this, 'clear_cache' ] );
+    }
+
+    /**
+     * Limpa cache quando há alterações no menu
+     */
+    public function clear_cache() {
+        $this->menu_cache = null;
+        delete_transient( 'atricon_sidebar_menu_cache' );
     }
 
     public function enqueue_assets() {
@@ -97,9 +120,24 @@ class ATRICON_Sidebar_Menu {
         echo $this->get_sidebar_markup();
     }
 
+    /**
+     * Obtém o markup da sidebar com cache
+     */
     private function get_sidebar_markup() {
+        // Verifica cache
+        if ( $this->menu_cache ) {
+            return $this->menu_cache;
+        }
+
+        $cached = get_transient( 'atricon_sidebar_menu_cache' );
+        if ( $cached !== false ) {
+            $this->menu_cache = $cached;
+            return $cached;
+        }
+
         // Exporta a estrutura do menu para o JS
         $menu_data = json_encode($this->menu->get_menu_items());
+        
         ob_start(); ?>
         <script>window.ATRICON_MENU_DATA = <?php echo $menu_data; ?>;</script>
         <div id="menu-container" class="container">
@@ -108,18 +146,35 @@ class ATRICON_Sidebar_Menu {
               <div class="search-wrap">
                 <input type="text" id="menu-search" placeholder="Buscar no menu...">
                 <i class="material-icons clear-search" id="clear-search">close</i>
+                <div id="search-results-count"></div>
               </div>
             </div>
             <?php
-            wp_nav_menu([
-                'theme_location' => 'atrcn-sidebar',
-                'container'      => false,
-                'menu_class'     => 'menu',
-                'items_wrap'     => '<ul id="menu-list" class="menu">%3$s</ul>',
-                'depth'          => 2, // Permite submenus
-                'walker'         => new ATRICON_Icon_Walker(),
-                'fallback_cb'    => false,
-            ]);
+            // Busca o menu de forma otimizada
+            $menu_location = 'atrcn-sidebar';
+            $locations = get_nav_menu_locations();
+            $menu_id = isset( $locations[ $menu_location ] ) ? $locations[ $menu_location ] : null;
+            
+            if ( $menu_id ) {
+                $menu_items = wp_get_nav_menu_items( $menu_id );
+                if ( ! empty( $menu_items ) ) {
+                    wp_nav_menu([
+                        'theme_location' => $menu_location,
+                        'container'      => false,
+                        'menu_class'     => 'menu',
+                        'items_wrap'     => '<ul id="menu-list" class="menu">%3$s</ul>',
+                        'depth'          => 2, // Permite submenus
+                        'walker'         => new ATRICON_Icon_Walker(),
+                        'fallback_cb'    => false,
+                    ]);
+                } else {
+                    // Fallback se o menu estiver vazio
+                    echo '<ul id="menu-list" class="menu"><li class="menu-item menu-item-top"><a href="#" class="menu-link"><i class="material-icons menu-icon" aria-hidden="true">menu</i> <span class="label">Menu não configurado</span></a></li></ul>';
+                }
+            } else {
+                // Fallback se não houver menu configurado
+                echo '<ul id="menu-list" class="menu"><li class="menu-item menu-item-top"><a href="#" class="menu-link"><i class="material-icons menu-icon" aria-hidden="true">menu</i> <span class="label">Menu não configurado</span></a></li></ul>';
+            }
             ?>
           </aside>
           <aside id="submenu" class="submenu-sidebar">
@@ -128,7 +183,13 @@ class ATRICON_Sidebar_Menu {
           </aside>
         </div>
         <?php
-        return ob_get_clean();
+        $markup = ob_get_clean();
+        
+        // Salva no cache por 5 minutos
+        $this->menu_cache = $markup;
+        set_transient( 'atricon_sidebar_menu_cache', $markup, 300 );
+        
+        return $markup;
     }
 }
 
@@ -154,4 +215,9 @@ function atricon_sidebar_menu_deactivate() {
     if ($existing_menu) {
         wp_delete_nav_menu($existing_menu->term_id);
     }
+    
+    // Limpa cache
+    delete_transient( 'atricon_sidebar_menu_cache' );
+    delete_transient( 'atricon_menu_cache' );
+    delete_transient( 'atricon_csv_content' );
 }

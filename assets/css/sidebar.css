@@ -189,3 +189,130 @@ main {
   pointer-events: auto;
 }
 
+/* Estilos para busca melhorada */
+.search-wrap {
+  position: relative;
+}
+
+.search-wrap input:focus {
+  border-color: #006A6B;
+  box-shadow: 0 0 0 2px rgba(0, 106, 107, 0.1);
+  outline: none;
+}
+
+#clear-search {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+  font-size: 18px;
+  display: none;
+  z-index: 1;
+}
+
+#clear-search:hover {
+  color: #333;
+}
+
+/* Estilos para destacar resultados da busca */
+.search-highlight {
+  background-color: #6FF7FF !important;
+  color: #002020 !important;
+  border-left: 4px solid #006A6B !important;
+  animation: searchHighlight 0.3s ease !important;
+  font-weight: 500 !important;
+}
+
+@keyframes searchHighlight {
+  0% {
+    background-color: #006A6B;
+    transform: scale(1.02);
+  }
+  100% {
+    background-color: #6FF7FF;
+    transform: scale(1);
+  }
+}
+
+/* Estados de hover para itens destacados */
+.search-highlight:hover {
+  background-color: #006A6B !important;
+  color: #FFFFFF !important;
+  transform: translateX(4px);
+}
+
+/* Indicador de resultados de busca */
+#search-results-count {
+  position: absolute;
+  top: 100%;
+  left: 16px;
+  right: 16px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  display: none;
+  z-index: 1001;
+}
+
+/* Melhorias visuais para campo de busca */
+.search-box input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.search-box input:focus::placeholder {
+  color: #ccc;
+}
+
+/* Animação suave para aparição dos resultados */
+.menu-item {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.menu-item[style*="display: none"] {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+/* Destaque visual para termos encontrados no submenu */
+#submenu-content .search-highlight .submenu-title {
+  font-weight: 600;
+}
+
+#submenu-content .search-highlight .submenu-code {
+  color: #004d4e;
+}
+
+/* Destaque para termos de busca encontrados */
+.search-term {
+  background-color: #ffeb3b;
+  color: #333;
+  padding: 1px 2px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+/* Melhorias de acessibilidade */
+.search-highlight:focus {
+  outline: 2px solid #006A6B;
+  outline-offset: 2px;
+}
+
+/* Animação para feedback visual */
+.menu-item-top.search-match {
+  animation: searchPulse 0.5s ease;
+}
+
+@keyframes searchPulse {
+  0% { background-color: transparent; }
+  50% { background-color: rgba(0, 106, 107, 0.1); }
+  100% { background-color: transparent; }
+}
+
