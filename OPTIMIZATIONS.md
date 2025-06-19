@@ -193,4 +193,4 @@ As otimizações são ativadas automaticamente na versão 1.6.
 
 **Versão:** 1.6  
 **Data:** Dezembro 2024  
-**Autor:** Hermes Alves 
+**Autor:** Softagon Sistemas 

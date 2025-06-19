@@ -1,30 +1,30 @@
 Menu,Submenu,Código PNTP,Conteúdo Modelo
-TRANSPARÊNCIA,-,-,"A Prefeitura Municipal de [Nome da Cidade] assegura o direito à informação, conforme a LAI e demais legislações. Este portal oferece acesso facilitado aos dados públicos."
-Organização Administrativa,Estrutura Organizacional,2.1 a 2.5,"Aqui você encontra a estrutura organizacional do Executivo Municipal, com a descrição das secretarias e órgãos vinculados."
-Organização Administrativa,Recursos Humanos,6.1 a 6.6,"Informações sobre o quadro de pessoal, cargos, salários, concursos e demais dados relacionados aos recursos humanos."
-Organização Administrativa,Convênios e Transferências,5.1 a 5.3,"Relação de convênios, acordos e transferências de recursos celebrados pelo município com outras entidades."
-Normas e Leis,Legislações e Atos,2.6,"Acesso à legislação municipal vigente, incluindo Leis, Decretos, Portarias e demais atos normativos."
-Normas e Leis,LAI,Lei 12.527/2011,Informações e documentos relacionados à Lei de Acesso à Informação (Lei nº 12.527/2011).
-Normas e Leis,LRF,LC 101/2000,Publicações e informações sobre a Lei de Responsabilidade Fiscal (LC nº 101/2000).
-Normas e Leis,LGPD e Governo Digital,15.1 a 15.6,Informações sobre a aplicação da LGPD na Prefeitura e ações de Governo Digital.
-Contabilidade Pública,Receitas,3.1 a 3.3,Informações detalhadas sobre a arrecadação de receitas do município.
-Contabilidade Pública,Despesas,4.1 a 4.2,Informações detalhadas sobre a execução das despesas públicas.
-Contabilidade Pública,Renúncias de Receitas,16.1 a 16.4,Divulgação de renúncias de receitas e incentivos fiscais concedidos.
-Contabilidade Pública,Dívida Ativa,3.3,Informações sobre a Dívida Ativa do município e mecanismos de cobrança.
-Gestão de Recursos,Planejamento e Contas,11.1 a 11.10,Documentos de planejamento orçamentário e prestação de contas.
-Gestão de Recursos,Emendas Parlamentares,17.1 a 17.2,Informações sobre a execução orçamentária e financeira das emendas parlamentares.
-Contratos e Licitações,Licitações e Contratos,8.1 a 9.4,"Publicação de editais, contratos e demais informações sobre os processos licitatórios."
-Contratos e Licitações,Ordem Cronológica,9.4,Informação da ordem cronológica de pagamentos de fornecedores.
-Despesas com Pessoal,Diárias e Passagens,7.1 a 7.2,Informações sobre despesas com diárias e passagens no âmbito municipal.
-Despesas com Pessoal,Valores das Diárias,7.2,Tabela de valores das diárias pagas pela Administração Municipal.
-Cidadania e Acesso,SIC,12.1 a 12.9,Serviço de Informação ao Cidadão (SIC): saiba como solicitar informações.
-Cidadania e Acesso,Ouvidorias,14.1 a 14.3,"Canais de Ouvidoria para manifestações, denúncias, reclamações e sugestões."
-Cidadania e Acesso,Perguntas Frequentes,2.7,Perguntas frequentes e respostas sobre serviços municipais.
-Cidadania e Acesso,Carta de Serviços ao Cidadão,-,Conheça os serviços públicos ofertados pelo município e as formas de acesso.
-Publicações Oficiais,Diário Oficial,Lei 4.965/1966,Publicações oficiais do município disponíveis no Diário Oficial.
-Publicações Oficiais,Transparência COVID-19,PRSE/MPF 12/2022,Informações relacionadas à gestão e uso de recursos para o enfrentamento da COVID-19.
-Indicadores e Avaliação,Radar da Transparência Pública,2.9,Acompanhamento da avaliação do município no Radar da Transparência Pública.
-Indicadores e Avaliação,Dados Abertos,CGU,Acesso aos dados abertos disponibilizados pelo município.
-Serviços Essenciais,Obras,10.1 a 10.4,Acompanhamento das obras públicas em execução no município.
-Serviços Essenciais,Saúde,18.1 a 18.3,Informações sobre os serviços de saúde municipais.
-Serviços Essenciais,Educação,19.1 a 19.2,Informações sobre os serviços e infraestrutura da rede municipal de educação.
+TRANSPARÊNCIA,-,-,"A Prefeitura Municipal de [Nome da Cidade] assegura o direito à informação por meio de um portal interativo que oferece acesso a bases de dados orçamentárias, licitações e folha de pagamento em CSV e JSON atualizados mensalmente, relatórios de compliance, APIs públicas e indicadores de uso, além de um guia rápido de consulta para cidadãos, desenvolvedores e jornalistas."
+Organização Administrativa,Estrutura Organizacional,2.1 a 2.5,"No item 2.1 a 2.5, a estrutura organizacional do Executivo Municipal é apresentada num organograma interativo com descrição de secretarias e órgãos vinculados, legislação de criação, atribuições, número de cargos estratégicos, links para arquivos SVG/JSON e indicadores de reuniões e processos por setor."
+Organização Administrativa,Recursos Humanos,6.1 a 6.6,"Nos itens 6.1 a 6.6, o quadro de pessoal é detalhado com filtros por cargo, nível salarial, data de contratação e concurso, apresentando gráficos de evolução anual de contratações, desligamentos e terceirizações, além de CSVs com carga horária e benefícios para consulta e download."
+Organização Administrativa,Convênios e Transferências,5.1 a 5.3,"Para os itens 5.1 a 5.3, os convênios e transferências são listados com objeto, data de assinatura, valores previstos e executados, contrapartidas e vigência, disponibilizados em planilhas CSV detalhadas por fonte de recurso e cronograma, com filtros por parceiro e visualização de gráficos de execução."
+Normas e Leis,Legislações e Atos,2.6,"No item 2.6, a legislação municipal vigente é apresentada numa linha do tempo interativa com filtros por ano e tema, disponibilizando PDFs, resumos executivos em HTML e um CSV com número, data de publicação e objeto para buscas automatizadas."
+Normas e Leis,LAI,Lei 12.527/2011,"No item Lei 12.527/2011, o fluxo de atendimento de demandas é ilustrado por fluxograma, com prazos legais, formulários online e relatórios trimestrais de pedidos recebidos e atendidos, permitindo calcular a taxa de resposta e consultar o SLA de cada solicitação."
+Normas e Leis,LRF,LC 101/2000,"No item LC 101/2000, são detalhadas metas fiscais por trimestre, despesas com pessoal e encargos (% da Receita Corrente Líquida), com CSVs de meta, realizado e desvio, além de demonstrações contábeis em XBRL para acompanhamento por analistas e cidadãos."
+Normas e Leis,LGPD e Governo Digital,15.1 a 15.6,"Nos itens 15.1 a 15.6, são descritas as políticas de LGPD e Governo Digital, incluindo nome do encarregado, fluxos de tratamento de dados pessoais, canais de reclamações, registros de incidentes de segurança e estatísticas de solicitações em CSV, além de roadmap de iniciativas e indicadores de maturidade digital."
+Contabilidade Pública,Receitas,3.1 a 3.3,"Nos itens 3.1 a 3.3, a arrecadação de receitas é apresentada em tabelas de receitas por fonte (tributária, patrimonial, transferências) com CSV contendo natureza, valor previsto, arrecadado e saldo, gráficos de comparação anual e alertas de variação superiores a 10%."
+Contabilidade Pública,Despesas,4.1 a 4.2,"Nos itens 4.1 a 4.2, as despesas públicas são detalhadas por função, subfunção, grupo e modalidade de execução, em CSVs com credor, valor empenhado, liquidado e pago, e filtros de busca por fornecedor ou valor para identificação de gastos atípicos."
+Contabilidade Pública,Renúncias de Receitas,16.1 a 16.4,"Nos itens 16.1 a 16.4, divulgam-se renúncias fiscais e incentivos concedidos, com CSVs de lei, beneficiário, período e estimativa de renúncia, além de comparativos anuais para avaliar o impacto fiscal dessas políticas."
+Contabilidade Pública,Dívida Ativa,3.3,"No item 3.3, a dívida ativa é segmentada por tipo (IPTU, ISS, multas), em CSV com contribuinte, data de inscrição, valor atualizado e status, incluindo filtros para índices de recuperação de crédito e resultados de leilões."
+Gestão de Recursos,Planejamento e Contas,11.1 a 11.10,"Nos itens 11.1 a 11.10, PPA, LDO e LOA estão reunidos em repositório único com CSVs de metas e resultados, relatórios de auditoria interna e externa, e calendário de prazos com alertas de atualização automáticos."
+Gestão de Recursos,Emendas Parlamentares,17.1 a 17.2,"Nos itens 17.1 a 17.2, as emendas parlamentares são listadas com autor, valor, finalidade e estágio de execução, em CSV de parlamentar, proposta, valor total e executado, complementados por dashboard geográfico de impacto."
+Contratos e Licitações,Licitações e Contratos,8.1 a 9.4,"Nos itens 8.1 a 9.4, licitações e contratos são publicados desde edital até aditivos, com CSVs de número de processo, objeto, participantes e valor adjudicado, incluindo links para atas e planilhas de comparação de propostas."
+Contratos e Licitações,Ordem Cronológica,9.4,"No item 9.4, a ordem cronológica de pagamentos é apresentada em CSV com fornecedor, data de empenho, pagamento e valor, permitindo rastrear fluxo de caixa e identificar atrasos ou pagamentos extras."
+Despesas com Pessoal,Diárias e Passagens,7.1 a 7.2,"Nos itens 7.1 a 7.2, diárias e passagens são detalhadas em CSV com servidor, destino, período, valor unitário e total pago, com filtros para gastos por equipe ou evento e histórico de reajustes."
+Despesas com Pessoal,Valores das Diárias,7.2,"No item 7.2, a tabela de valores de diárias é disponibilizada em CSV detalhando pernoite, alimentação e transporte, com histórico de reajustes e planilha de cálculo de custo."
+Cidadania e Acesso,SIC,12.1 a 12.9,"Nos itens 12.1 a 12.9, o SIC é apresentado com fluxos de protocolo, prazos legais e estatísticas de demandas em CSV de protocolo, assunto, datas de recebimento e resposta, com tutoriais em vídeo de uso."
+Cidadania e Acesso,Ouvidorias,14.1 a 14.3,"Nos itens 14.1 a 14.3, canais de ouvidoria são listados (telefone, e-mail, formulário), com CSV de tipo, manifestação e status, complementados por relatórios semestrais de satisfação e plano de melhoria."
+Cidadania e Acesso,Perguntas Frequentes,2.7,"No item 2.7, FAQs são organizadas por tema em CSV de pergunta, resposta e data de atualização, com sistema de busca por palavra-chave e contextualização por serviço."
+Cidadania e Acesso,Carta de Serviços ao Cidadão,-,"No item Carta de Serviços ao Cidadão, um catálogo interativo via API REST lista cada serviço com descrição, prazo, custo e responsável, conectado ao SIC para abertura direta de solicitações."
+Publicações Oficiais,Diário Oficial,Lei 4.965/1966,"No item Lei 4.965/1966, publicações do Diário Oficial estão disponíveis em PDF, HTML e CSV com índice por data, lei e assunto, além de feed RSS e webhook para notificações de novas publicações."
+Publicações Oficiais,Transparência COVID-19,PRSE/MPF 12/2022,"No item PRSE/MPF 12/2022, detalham-se gastos COVID-19 em saúde e assistência social, com CSV de ação, valor empenhado e executado, e dashboard de indicadores de impacto (leitos, vacinas)."
+Indicadores e Avaliação,Radar da Transparência Pública,2.9,"No item 2.9, histórico de notas no Radar da Transparência Pública é divulgado em CSV de ano, nota geral e por eixo, com comparativo de desempenho frente a cidades similares."
+Indicadores e Avaliação,Dados Abertos,CGU,"No item CGU, dados abertos estão catalogados em CSV, JSON e XML com metadados padronizados, portal de descoberta e API para filtragem e download dinâmico de recursos."
+Serviços Essenciais,Obras,10.1 a 10.4,"Nos itens 10.1 a 10.4, cada obra pública é descrita com nome, localização (coordenadas), status, cronograma, CSV de insumos, quantidades e percentual executado, complementado por fotos georreferenciadas."
+Serviços Essenciais,Saúde,18.1 a 18.3,"Nos itens 18.1 a 18.3, serviços de saúde são detalhados por UBS, procedimentos, quantidade realizada e tempo médio de espera em CSV, com indicadores de desempenho e mapas de cobertura."
+Serviços Essenciais,Educação,19.1 a 19.2,"Nos itens 19.1 a 19.2, a oferta de serviços educacionais (transporte, merenda, reforço, inclusão) e infraestrutura (salas, laboratórios, acessibilidade) são apresentadas em CSV de aluno atendido, serviço prestado e percentual de cobertura, acompanhadas de mapas de localização e indicadores de qualidade."

@@ -428,34 +428,135 @@ class ATRICON_Menu {
         }
         ?>
         <div class="wrap">
-            <h1>ATRICON Menu</h1>
-            <form method="post" action="">
-                <?php wp_nonce_field('atricon_recreate_menu'); ?>
-                <p>Clique no botão abaixo para recriar o menu ATRICON com todas as páginas necessárias.</p>
-                <p class="submit">
-                    <input type="submit" name="atricon_recreate_menu" class="button button-primary" value="Recriar Menu">
-                </p>
-            </form>
+            <h1><span class="dashicons dashicons-menu" style="font-size: 30px; width: 30px; height: 30px; margin-right: 10px;"></span>ATRICON Menu</h1>
             
-            <hr>
-            
-            <form method="post" action="">
-                <?php wp_nonce_field('atricon_create_pages'); ?>
-                <p>Criar páginas do CSV (pula páginas que já existem).</p>
-                <p class="submit">
-                    <input type="submit" name="atricon_create_pages" class="button button-primary" value="Criar Páginas">
-                </p>
-            </form>
-            
-            <hr>
-            
-            <form method="post" action="">
-                <?php wp_nonce_field('atricon_clear_cache'); ?>
-                <p>Limpar cache do menu e conteúdo CSV.</p>
-                <p class="submit">
-                    <input type="submit" name="atricon_clear_cache" class="button button-secondary" value="Limpar Cache">
-                </p>
-            </form>
+            <div class="card" style="max-width: 100%; margin-top: 20px;">
+                <h2><span class="dashicons dashicons-info" style="color: #2271b1;"></span> Sobre o Plugin</h2>
+                <p>Este plugin gerencia o menu lateral ATRICON e suas páginas correspondentes. Todas as páginas são criadas como filhas da página principal ATRICON, mantendo uma organização hierárquica consistente.</p>
+            </div>
+
+            <div class="card" style="max-width: 100%; margin-top: 20px;">
+                <h2><span class="dashicons dashicons-admin-tools" style="color: #2271b1;"></span> Ferramentas do Menu</h2>
+                
+                <div style="background: #f0f6fc; padding: 20px; border-left: 4px solid #2271b1; margin: 20px 0;">
+                    <form method="post" action="">
+                        <?php wp_nonce_field('atricon_recreate_menu'); ?>
+                        <h3><span class="dashicons dashicons-update" style="color: #2271b1;"></span> Recriar Menu</h3>
+                        <p>Esta opção irá recriar o menu ATRICON com todas as páginas necessárias. Use esta opção quando:</p>
+                        <ul style="list-style-type: disc; margin-left: 20px;">
+                            <li>Precisar resetar o menu para seu estado original</li>
+                            <li>Houver problemas com a estrutura atual do menu</li>
+                            <li>Quiser garantir que todas as páginas estão corretamente vinculadas</li>
+                        </ul>
+                        <p class="submit">
+                            <input type="submit" name="atricon_recreate_menu" class="button button-primary" value="Recriar Menu">
+                        </p>
+                    </form>
+                </div>
+
+                <div style="background: #f0f6fc; padding: 20px; border-left: 4px solid #2271b1; margin: 20px 0;">
+                    <form method="post" action="">
+                        <?php wp_nonce_field('atricon_create_pages'); ?>
+                        <h3><span class="dashicons dashicons-admin-page" style="color: #2271b1;"></span> Criar Páginas</h3>
+                        <p>Esta opção irá criar todas as páginas necessárias a partir do arquivo CSV modelo. O processo:</p>
+                        <ul style="list-style-type: disc; margin-left: 20px;">
+                            <li>Cria apenas páginas que ainda não existem</li>
+                            <li>Mantém todas as páginas como filhas da página ATRICON</li>
+                            <li>Preserva o conteúdo das páginas existentes</li>
+                        </ul>
+                        <p class="submit">
+                            <input type="submit" name="atricon_create_pages" class="button button-primary" value="Criar Páginas">
+                        </p>
+                    </form>
+                </div>
+
+                <div style="background: #f0f6fc; padding: 20px; border-left: 4px solid #2271b1; margin: 20px 0;">
+                    <form method="post" action="">
+                        <?php wp_nonce_field('atricon_clear_cache'); ?>
+                        <h3><span class="dashicons dashicons-trash" style="color: #2271b1;"></span> Limpar Cache</h3>
+                        <p>Esta opção limpa o cache do menu e do conteúdo CSV. Use quando:</p>
+                        <ul style="list-style-type: disc; margin-left: 20px;">
+                            <li>Fizer alterações manuais no menu ou páginas</li>
+                            <li>Atualizar o arquivo CSV de conteúdo</li>
+                            <li>Precisar forçar uma atualização dos dados</li>
+                        </ul>
+                        <p class="submit">
+                            <input type="submit" name="atricon_clear_cache" class="button button-secondary" value="Limpar Cache">
+                        </p>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card" style="max-width: 100%; margin-top: 20px;">
+                <h2><span class="dashicons dashicons-editor-help" style="color: #2271b1;"></span> Ajuda</h2>
+                <p>Para mais informações sobre como usar o plugin:</p>
+                <ul style="list-style-type: disc; margin-left: 20px;">
+                    <li>Todas as páginas são criadas automaticamente como filhas da página principal ATRICON</li>
+                    <li>O menu mantém sua estrutura hierárquica independente da estrutura das páginas</li>
+                    <li>O conteúdo das páginas pode ser personalizado através do arquivo CSV modelo</li>
+                    <li>Em caso de dúvidas, use primeiro a opção "Limpar Cache" antes de recriar o menu</li>
+                </ul>
+            </div>
+
+            <div class="card" style="max-width: 100%; margin-top: 20px;">
+                <h2><span class="dashicons dashicons-art" style="color: #2271b1;"></span> Personalizando Ícones do Menu</h2>
+                
+                <div style="background: #f0f6fc; padding: 20px; border-left: 4px solid #2271b1; margin: 20px 0;">
+                    <h3>Como Alterar os Ícones do Menu</h3>
+                    <p>Os ícones do menu utilizam a biblioteca Material Icons do Google. Para alterá-los:</p>
+                    
+                    <h4 style="margin-top: 20px;">Passo a Passo:</h4>
+                    <ol style="margin-left: 20px;">
+                        <li>Acesse o menu WordPress > Aparência > Menus</li>
+                        <li>Selecione o menu "ATRICON" no seletor de menus</li>
+                        <li>Para cada item do menu que deseja alterar o ícone:
+                            <ul style="list-style-type: disc; margin-left: 20px; margin-top: 5px;">
+                                <li>Expanda o item do menu clicando na seta</li>
+                                <li>No campo "Atributo título", insira o nome do ícone do Material Icons</li>
+                                <li>Clique em "Salvar Menu"</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <div style="background: #fff; padding: 15px; border: 1px solid #ddd; margin: 20px 0;">
+                        <h4 style="margin-top: 0;"><span class="dashicons dashicons-info" style="color: #2271b1;"></span> Dica Importante</h4>
+                        <p>O campo "Atributo título" aceita os nomes dos ícones do Material Icons. Exemplos comuns:</p>
+                        <ul style="list-style-type: none; margin-left: 20px;">
+                            <li><i class="material-icons" style="vertical-align: middle;">search</i> Para menu de busca: digite "search"</li>
+                            <li><i class="material-icons" style="vertical-align: middle;">visibility</i> Para transparência: digite "visibility"</li>
+                            <li><i class="material-icons" style="vertical-align: middle;">dashboard</i> Para estrutura organizacional: digite "dashboard"</li>
+                            <li><i class="material-icons" style="vertical-align: middle;">people</i> Para recursos humanos: digite "people"</li>
+                        </ul>
+                    </div>
+
+                    <h4 style="margin-top: 20px;">Biblioteca de Ícones Disponíveis</h4>
+                    <p>Você pode encontrar todos os ícones disponíveis em:</p>
+                    <ul style="list-style-type: disc; margin-left: 20px;">
+                        <li><a href="https://fonts.google.com/icons" target="_blank">Material Icons - Google Fonts</a></li>
+                        <li>Na página do Google Fonts, você pode pesquisar por ícones</li>
+                        <li>Use exatamente o nome que aparece abaixo do ícone no site do Google</li>
+                    </ul>
+
+                    <h4 style="margin-top: 20px;">Ícones Populares para o Menu:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; background: #fff; padding: 15px; border: 1px solid #ddd; margin-top: 10px;">
+                        <div><i class="material-icons">search</i> search</div>
+                        <div><i class="material-icons">visibility</i> visibility</div>
+                        <div><i class="material-icons">dashboard</i> dashboard</div>
+                        <div><i class="material-icons">people</i> people</div>
+                        <div><i class="material-icons">description</i> description</div>
+                        <div><i class="material-icons">public</i> public</div>
+                        <div><i class="material-icons">school</i> school</div>
+                        <div><i class="material-icons">health_and_safety</i> health_and_safety</div>
+                        <div><i class="material-icons">account_balance</i> account_balance</div>
+                        <div><i class="material-icons">info</i> info</div>
+                    </div>
+
+                    <div style="background: #fef8ee; padding: 15px; border-left: 4px solid #f0b849; margin-top: 20px;">
+                        <h4 style="margin-top: 0; color: #925a08;"><span class="dashicons dashicons-warning" style="color: #925a08;"></span> Observação</h4>
+                        <p>Após alterar os ícones, você pode precisar limpar o cache do menu usando o botão "Limpar Cache" acima para ver as alterações imediatamente.</p>
+                    </div>
+                </div>
+            </div>
         </div>
         <?php
     }

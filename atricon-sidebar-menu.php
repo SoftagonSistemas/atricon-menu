@@ -2,8 +2,9 @@
 /**
  * Plugin Name: ATRICON Sidebar Menu
  * Description: Exibe a sidebar fixa em todas as páginas públicas, com busca, submenus e Material Icons via atributo title.
- * Version:     1.7
- * Author:      Hermes Alves
+ * Version:     1.8
+ * Author:      Softagon Sistemas
+ * Author URI:  https://softagon.com.br
  * Requires at least: 6.8
  * Text Domain: atricon-sidebar-menu
  */
@@ -180,10 +181,17 @@ class ATRICON_Sidebar_Menu {
             }
             ?>
             <div class="sidebar-footer">
-              <div class="footer-logo-container">
-                <img src="<?php echo plugin_dir_url( __FILE__ ); ?>logo.png" alt="ATRICON Logo" class="footer-logo" />
-              </div>
-              <span class="footer-label">ATRICON</span>
+              <?php
+              // Busca a página ATRICON
+              $atricon_page = get_page_by_path('atricon');
+              $atricon_url = $atricon_page ? get_permalink($atricon_page->ID) : home_url('/atricon/');
+              ?>
+              <a href="<?php echo esc_url($atricon_url); ?>" class="footer-link" title="Ir para página ATRICON">
+                <div class="footer-logo-container">
+                  <img src="<?php echo plugin_dir_url( __FILE__ ); ?>logo.png" alt="ATRICON Logo" class="footer-logo" />
+                </div>
+                <span class="footer-label">ATRICON</span>
+              </a>
             </div>
           </aside>
           <aside id="submenu" class="submenu-sidebar">
@@ -207,6 +215,15 @@ function atricon_sidebar_menu_init() {
     new ATRICON_Sidebar_Menu();
 }
 add_action( 'plugins_loaded', 'atricon_sidebar_menu_init' );
+
+// Adiciona link "Ver detalhes" na página de plugins
+function atricon_add_plugin_links($links) {
+    $plugin_links = array(
+        '<a href="' . admin_url('admin.php?page=atricon-menu') . '">Ver detalhes</a>'
+    );
+    return array_merge($plugin_links, $links);
+}
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'atricon_add_plugin_links');
 
 // Ativação do plugin
 register_activation_hook( __FILE__, function() {
