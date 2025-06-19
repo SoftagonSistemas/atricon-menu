@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ATRICON Sidebar Menu
  * Description: Exibe a sidebar fixa em todas as páginas públicas, com busca, submenus e Material Icons via atributo title.
- * Version:     1.6
+ * Version:     1.7
  * Author:      Hermes Alves
  * Requires at least: 6.8
  * Text Domain: atricon-sidebar-menu
@@ -91,6 +91,9 @@ class ATRICON_Sidebar_Menu {
         add_action( 'wp_footer',          [ $this, 'print_sidebar_fallback' ] );
         add_action( 'wp_update_nav_menu', [ $this, 'clear_cache' ] );
         add_action( 'wp_delete_nav_menu', [ $this, 'clear_cache' ] );
+        
+        // Limpa cache na inicialização para garantir que as mudanças sejam aplicadas
+        $this->clear_cache();
     }
 
     /**
@@ -105,7 +108,7 @@ class ATRICON_Sidebar_Menu {
         $url = plugin_dir_url( __FILE__ );
         wp_enqueue_style( 'atricon-roboto', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap', [], null );
         wp_enqueue_style( 'atricon-material-icons', 'https://fonts.googleapis.com/icon?family=Material+Icons', [], null );
-        wp_enqueue_style( 'atricon-sidebar', $url . 'assets/css/sidebar.css', [], null );
+        wp_enqueue_style( 'atricon-sidebar', $url . 'assets/css/sidebar.css', [], '1.7.1' );
         wp_enqueue_script( 'jquery' );
         wp_enqueue_script( 'atricon-sidebar-js', $url . 'assets/js/sidebar.js', [ 'jquery' ], null, true );
     }
@@ -176,6 +179,12 @@ class ATRICON_Sidebar_Menu {
                 echo '<ul id="menu-list" class="menu"><li class="menu-item menu-item-top"><a href="#" class="menu-link"><i class="material-icons menu-icon" aria-hidden="true">menu</i> <span class="label">Menu não configurado</span></a></li></ul>';
             }
             ?>
+            <div class="sidebar-footer">
+              <div class="footer-logo-container">
+                <img src="<?php echo plugin_dir_url( __FILE__ ); ?>logo.png" alt="ATRICON Logo" class="footer-logo" />
+              </div>
+              <span class="footer-label">ATRICON</span>
+            </div>
           </aside>
           <aside id="submenu" class="submenu-sidebar">
             <h2 id="submenu-title"></h2>
@@ -200,12 +209,10 @@ function atricon_sidebar_menu_init() {
 add_action( 'plugins_loaded', 'atricon_sidebar_menu_init' );
 
 // Ativação do plugin
-register_activation_hook( __FILE__, 'atricon_sidebar_menu_activate' );
-function atricon_sidebar_menu_activate() {
+register_activation_hook( __FILE__, function() {
     $menu = new ATRICON_Menu();
-    $map = $menu->create_menu_pages_and_get_map();
-    $menu->create_menu_with_pages($map);
-}
+    $menu->on_activation();
+} );
 
 // Desativação do plugin
 register_deactivation_hook( __FILE__, 'atricon_sidebar_menu_deactivate' );

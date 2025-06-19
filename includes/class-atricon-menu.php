@@ -25,6 +25,20 @@ class ATRICON_Menu {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('wp_update_nav_menu', [$this, 'clear_menu_cache']);
         add_action('wp_delete_nav_menu', [$this, 'clear_menu_cache']);
+        
+        // Adiciona ação de ativação
+        register_activation_hook(plugin_dir_path(dirname(__FILE__)) . 'atricon-sidebar-menu.php', [$this, 'on_activation']);
+    }
+
+    /**
+     * Método executado na ativação do plugin
+     */
+    public function on_activation() {
+        // Cria as páginas e obtém o mapa
+        $map = $this->create_menu_pages_and_get_map();
+        
+        // Cria o menu usando as páginas
+        $this->create_menu_with_pages($map);
     }
 
     /**
@@ -194,27 +208,42 @@ class ATRICON_Menu {
         $slug = sanitize_title($item['v']);
         $path = $parent_slug ? 'atricon/' . sanitize_title($parent_slug) . '/' . $slug : 'atricon/' . $slug;
 
-        // Busca página pelo slug e pai - otimizada
+        // Primeiro, garante que a página ATRICON existe
+        $atricon_page = get_page_by_path('atricon');
+        if (!$atricon_page) {
+            $atricon_id = wp_insert_post([
+                'post_title'    => 'ATRICON',
+                'post_name'     => 'atricon',
+                'post_content'  => '<h1>ATRICON</h1><p>Página principal do portal ATRICON.</p>',
+                'post_status'   => 'publish',
+                'post_type'     => 'page',
+            ]);
+            $atricon_page = get_post($atricon_id);
+        }
+        
+        // Busca página pelo slug
         $page_args = [
             'name'        => $slug,
             'post_type'   => 'page',
             'post_status' => 'publish',
             'numberposts' => 1,
-            'fields'      => 'ids', // Retorna apenas IDs para melhor performance
+            'fields'      => 'ids',
         ];
         
-        $parent_id = 0;
-        if ($parent_slug) {
-            $parent_page = get_page_by_path('atricon/' . sanitize_title($parent_slug), OBJECT, 'page');
-            if ($parent_page) {
-                $page_args['post_parent'] = $parent_page->ID;
-                $parent_id = $parent_page->ID;
-            }
-        }
+        // Define o parent_id como o ID da página ATRICON
+        $parent_id = $atricon_page->ID;
         
         $existing_pages = get_posts($page_args);
         if (!empty($existing_pages)) {
             $page_id = $existing_pages[0];
+            // Atualiza o parent da página existente para ATRICON se necessário
+            $existing_page = get_post($page_id);
+            if ($existing_page->post_parent != $parent_id) {
+                wp_update_post([
+                    'ID' => $page_id,
+                    'post_parent' => $parent_id
+                ]);
+            }
         } else {
             $content = isset($menu_content[$item['t']]) ? $menu_content[$item['t']]['content'] : '<h2>' . esc_html($item['t']) . '</h2>' . (!empty($item['code']) ? '<p>Código de referência: ' . esc_html($item['code']) . '</p>' : '') . '<p>Esta página foi criada automaticamente pelo plugin ATRICON.</p>';
             
@@ -256,33 +285,39 @@ class ATRICON_Menu {
             if ($item['v'] === 'busca-servico') continue;
             
             $parent_path = 'atricon/' . sanitize_title($item['v']);
-            $url = isset($map[$parent_path]) ? get_permalink($map[$parent_path]) : home_url('/' . $parent_path);
+            $page_id = isset($map[$parent_path]) ? $map[$parent_path] : 0;
             
-            $menu_item_args = [
-                'menu-item-title'  => $item['t'],
-                'menu-item-url'    => $url,
-                'menu-item-status' => 'publish',
-                'menu-item-type'   => 'custom',
-                'menu-item-attr-title' => $item['icon'],
-            ];
-            
-            $pid = wp_update_nav_menu_item($menu_id, 0, $menu_item_args);
-            
-            if (!empty($item['c'])) {
-                foreach ($item['c'] as $child) {
-                    $child_path = 'atricon/' . sanitize_title($item['v']) . '/' . sanitize_title($child['v']);
-                    $child_url = isset($map[$child_path]) ? get_permalink($map[$child_path]) : home_url('/' . $child_path);
-                    
-                    $child_menu_item_args = [
-                        'menu-item-title'     => $child['t'] . ($child['code'] ? " ({$child['code']})" : ''),
-                        'menu-item-url'       => $child_url,
-                        'menu-item-parent-id' => $pid,
-                        'menu-item-status'    => 'publish',
-                        'menu-item-type'      => 'custom',
-                        'menu-item-attr-title' => $child['icon'],
-                    ];
-                    
-                    wp_update_nav_menu_item($menu_id, 0, $child_menu_item_args);
+            if ($page_id) {
+                $menu_item_args = [
+                    'menu-item-title'  => $item['t'],
+                    'menu-item-object' => 'page',
+                    'menu-item-object-id' => $page_id,
+                    'menu-item-status' => 'publish',
+                    'menu-item-type'   => 'post_type',
+                    'menu-item-attr-title' => $item['icon'],
+                ];
+                
+                $pid = wp_update_nav_menu_item($menu_id, 0, $menu_item_args);
+                
+                if (!empty($item['c'])) {
+                    foreach ($item['c'] as $child) {
+                        $child_path = 'atricon/' . sanitize_title($item['v']) . '/' . sanitize_title($child['v']);
+                        $child_page_id = isset($map[$child_path]) ? $map[$child_path] : 0;
+                        
+                        if ($child_page_id) {
+                            $child_menu_item_args = [
+                                'menu-item-title'     => $child['t'] . ($child['code'] ? " ({$child['code']})" : ''),
+                                'menu-item-object'    => 'page',
+                                'menu-item-object-id' => $child_page_id,
+                                'menu-item-parent-id' => $pid,
+                                'menu-item-status'    => 'publish',
+                                'menu-item-type'      => 'post_type',
+                                'menu-item-attr-title' => $child['icon'],
+                            ];
+                            
+                            wp_update_nav_menu_item($menu_id, 0, $child_menu_item_args);
+                        }
+                    }
                 }
             }
         }
@@ -312,6 +347,66 @@ class ATRICON_Menu {
     }
 
     /**
+     * Create pages from CSV content
+     */
+    public function create_pages_from_csv() {
+        // Get CSV content
+        $csv_content = $this->get_menu_content_from_csv();
+        
+        // First, check if ATRICON parent page exists
+        $parent_page = get_page_by_path('atricon');
+        $parent_id = 0;
+        
+        if (!$parent_page) {
+            // Create parent page if it doesn't exist
+            $parent_id = wp_insert_post([
+                'post_title'    => 'ATRICON',
+                'post_name'     => 'atricon',
+                'post_content'  => '<h1>ATRICON</h1><p>Página principal do portal ATRICON.</p>',
+                'post_status'   => 'publish',
+                'post_type'     => 'page',
+            ]);
+        } else {
+            $parent_id = $parent_page->ID;
+        }
+        
+        $created = 0;
+        $skipped = 0;
+        
+        foreach ($csv_content as $slug => $item) {
+            // Sanitize the slug
+            $page_slug = sanitize_title($slug);
+            
+            // Check if page exists
+            $existing_page = get_page_by_path('atricon/' . $page_slug);
+            
+            if (!$existing_page) {
+                // Create page
+                $page_id = wp_insert_post([
+                    'post_title'    => $slug,
+                    'post_name'     => $page_slug,
+                    'post_content'  => $item['content'],
+                    'post_status'   => 'publish',
+                    'post_type'     => 'page',
+                    'post_parent'   => $parent_id,
+                ]);
+                
+                if ($page_id && !is_wp_error($page_id)) {
+                    $created++;
+                }
+            } else {
+                $skipped++;
+            }
+        }
+        
+        return [
+            'created' => $created,
+            'skipped' => $skipped,
+            'total' => count($csv_content)
+        ];
+    }
+
+    /**
      * Render admin page
      */
     public function render_admin_page() {
@@ -326,6 +421,11 @@ class ATRICON_Menu {
             delete_transient('atricon_csv_content');
             echo '<div class="notice notice-success"><p>Cache limpo com sucesso!</p></div>';
         }
+
+        if (isset($_POST['atricon_create_pages']) && check_admin_referer('atricon_create_pages')) {
+            $result = $this->create_pages_from_csv();
+            echo '<div class="notice notice-success"><p>Páginas processadas com sucesso! Criadas: ' . $result['created'] . ', Ignoradas (já existem): ' . $result['skipped'] . ', Total: ' . $result['total'] . '</p></div>';
+        }
         ?>
         <div class="wrap">
             <h1>ATRICON Menu</h1>
@@ -334,6 +434,16 @@ class ATRICON_Menu {
                 <p>Clique no botão abaixo para recriar o menu ATRICON com todas as páginas necessárias.</p>
                 <p class="submit">
                     <input type="submit" name="atricon_recreate_menu" class="button button-primary" value="Recriar Menu">
+                </p>
+            </form>
+            
+            <hr>
+            
+            <form method="post" action="">
+                <?php wp_nonce_field('atricon_create_pages'); ?>
+                <p>Criar páginas do CSV (pula páginas que já existem).</p>
+                <p class="submit">
+                    <input type="submit" name="atricon_create_pages" class="button button-primary" value="Criar Páginas">
                 </p>
             </form>
             
